@@ -6,9 +6,9 @@
 //
 //  GPLEX Version:  1.2.2
 //  Machine:  HUY001
-//  DateTime: 10/11/2019 3:55:51 PM
+//  DateTime: 10/11/2019 6:49:06 PM
 //  UserName: huy
-//  GPLEX input file <ToyLang.Language.analyzer.lex - 10/11/2019 1:01:37 PM>
+//  GPLEX input file <ToyLang.Language.analyzer.lex - 10/11/2019 6:36:43 PM>
 //  GPLEX frame file <embedded resource>
 //
 //  Option settings: verbose, parser, stack, minimize
@@ -168,7 +168,7 @@ namespace CCAss3
     static Table[] NxS = new Table[97] {
 /* NxS[   0] */ new Table(0, 0, 0, null), // Shortest string ""
 /* NxS[   1] */ // Shortest string ""
-      new Table(9, 117, 2, new sbyte[] {3, 4, 2, 2, 2, 2, 
+      new Table(9, 117, 2, new sbyte[] {3, 4, 2, 2, 4, 2, 
           2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
           2, 3, 5, 2, 2, 2, 2, 2, 2, 6, 7, 8, 9, 10, 11, 12, 
           13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 2, 15, 16, 17, 18, 
@@ -181,7 +181,8 @@ namespace CCAss3
       new Table(9, 24, -1, new sbyte[] {3, -1, -1, -1, -1, -1, 
           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
           -1, 3}),
-/* NxS[   4] */ new Table(0, 0, -1, null), // Shortest string "\n"
+/* NxS[   4] */ // Shortest string "\n"
+      new Table(10, 4, -1, new sbyte[] {4, -1, -1, 4}),
 /* NxS[   5] */ // Shortest string "!"
       new Table(61, 1, -1, new sbyte[] {96}),
 /* NxS[   6] */ new Table(0, 0, -1, null), // Shortest string "("
@@ -1148,8 +1149,8 @@ Console.WriteLine("error"); yyerror("PIZDEC");
         case 3: // Recognized '{Space}+',	Shortest string "\t"
 /* skip */
             break;
-        case 4: // Recognized '[ \t\n]',	Shortest string "\n"
-;
+        case 4: // Recognized '{Eol}+',	Shortest string "\n"
+/* skip */
             break;
         case 6: // Recognized '"("',	Shortest string "("
 return (int)Token.LPAREN;

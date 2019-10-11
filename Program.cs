@@ -11,7 +11,7 @@ namespace CCAss3
         static void Main(string[] args)
         {
             ToyLangParser parser = new ToyLangParser();
-            parser.Parse("IMPORT aa; IMPORT pizda; CLASS kek.lol.v.rot.ebal EXTENDS huy;{}");
+            parser.Parse(System.IO.File.ReadAllText(@"C:\Users\huy\source\repos\CCAss3\Program.Toy"));
             RootNode node = parser.Root;
             Console.ReadLine();
         }

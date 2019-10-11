@@ -1,10 +1,10 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 10/11/2019 2:31:38 PM>
+//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 10/11/2019 6:46:51 PM>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  HUY001
-//  DateTime: 10/11/2019 2:31:41 PM
+//  DateTime: 10/11/2019 6:46:59 PM
 //  UserName: huy
 // ==========================================================================
 
@@ -16,13 +16,15 @@
 %tokentype Token
 
 %{
-       public RootNode Root;
+       public RootNode Root = new RootNode();
 %}
 
 %union { 
 			public int intNumber;
 			public double realNumber;
 			public string identifier; 
+			public Node node;
+			public object obj;
 	   }
 
 // Identifiers & numbers
@@ -73,10 +75,7 @@
 %start CompilationUnit
 
 %%
-CompilationUnit   {Root = new RootNode();}
-//---------------^^
-// Error: Syntax error, unexpected '{', expecting ':'
-// --------------------------------------------------
+CompilationUnit   
        : Imports ClassDeclarations    
        ;
 
@@ -95,85 +94,93 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody { Console.WriteLine($2.identifier); }
-       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody
+       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 0; c.Body = $5.obj as ClassBody;}
+       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 1; c.Body = $6.obj as ClassBody;}
        ;
 
 Extension
        : /* empty */
-       | EXTENDS IDENTIFIER
+       | EXTENDS IDENTIFIER {$$.node = new Identifier($2.identifier);}
        ;
 
 ClassBody
-       : LBRACE              RBRACE
-       | LBRACE ClassMembers RBRACE
+       : LBRACE              RBRACE {$$.obj = new ClassBody();}
+       | LBRACE ClassMembers RBRACE {$$.obj = $2.obj;}
        ;
 
 ClassMembers
-       :              ClassMember
-       | ClassMembers ClassMember
+       :              ClassMember {ClassBody b = new ClassBody(); $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration);}else{b.Methods.Add($1.obj as MethodDeclaration);};}
+       | ClassMembers ClassMember {ClassBody b = $$.obj as ClassBody; $$.obj = b; if($2.intNumber == 0){b.Fields.Add($2.obj as FieldDeclaration);}else{b.Methods.Add($2.obj as MethodDeclaration);};}
        ;
 
 ClassMember
-       : FieldDeclaration
-       | MethodDeclaration
+       : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj;}
+       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj; Console.WriteLine("qq");}
        ;
 
 FieldDeclaration
-       : Visibility Staticness Type IDENTIFIER SEMICOLON
+       : Visibility Staticness Type IDENTIFIER SEMICOLON 
+       {FieldDeclaration f = new FieldDeclaration(); f.Visibility = $1.intNumber; f.Staticness = $2.intNumber;
+       f.Type = $3.obj as CType; f.Id = new Identifier($4.identifier); $$.obj = f;}
        ;
 
 Visibility
-       : /* empty */
-       | PRIVATE
-       | PUBLIC
+       : /* empty */ {$$.intNumber = 0;}
+       | PRIVATE {$$.intNumber = 0;}
+       | PUBLIC {$$.intNumber = 1;}
        ;
 
 Staticness
-       : /* empty */
-       | STATIC
+       : /* empty */ {$$.intNumber = 0;}
+       | STATIC {$$.intNumber = 1;}
        ;
 
 MethodDeclaration
-       : Visibility Staticness MethodType IDENTIFIER Parameters
-            Body
+       : Visibility Staticness MethodType IDENTIFIER Parameters Body   {MethodDeclaration m = new MethodDeclaration(); m.Visibility = $1.intNumber; m.Staticness = $2.intNumber;
+        m.MethodType= (CType) $3.obj; m.Id = new Identifier($4.identifier); m.Params = $5.obj as List<Parameter>; $$.obj = m; m.Body = $6.obj as MethodBody;}
+           
+            
        ;
 
 Parameters
-       : LPAREN               RPAREN
-       | LPAREN ParameterList RPAREN
+       : LPAREN               RPAREN {$$.obj = new List<Parameter>();}
+       | LPAREN ParameterList RPAREN {$$.obj = $2.obj;}
        ;
 
 ParameterList
-       :                     Parameter
-       | ParameterList COMMA Parameter
+       :                     Parameter {$$.obj = new List<Parameter>(); ($$.obj as List<Parameter> ).Add($1.obj as Parameter);}
+       | ParameterList COMMA Parameter {($$.obj as List<Parameter>).Add($3.obj as Parameter);}
        ;
 
 Parameter
-       : Type IDENTIFIER
+       : Type IDENTIFIER {$$.obj = new Parameter($1.obj as CType, new Identifier($2.identifier)); }
        ;
 
 MethodType
-       : Type
-       | VOID
+       : Type {$$.obj = $1;}
+       | VOID {$$.obj = new CType();}
        ;
 
 Body
-       : LBRACE LocalDeclarations Statements RBRACE
+       : LBRACE RBRACE {$$.obj = new MethodBody();}
+       | LBRACE LocalDeclarations Statements RBRACE { Console.WriteLine("qq");MethodBody mb = new MethodBody(); mb.LocalDeclarations = $2.obj as List<LocalDeclaration>; mb.Statements = $3.obj as List<Statement>; $$.obj = mb;}
        ;
 
 LocalDeclarations
-       :                   LocalDeclaration
-       | LocalDeclarations LocalDeclaration
+       :                   LocalDeclaration {$$.obj = new List<LocalDeclaration>(); ($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
+       | LocalDeclarations LocalDeclaration {($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
        ;
 
 LocalDeclaration
-       : Type IDENTIFIER SEMICOLON
+       : Type IDENTIFIER SEMICOLON { LocalDeclaration ld = new LocalDeclaration(); ld.Type = $1.obj as CType; ld.Id = new Identifier($2.identifier);}
        ;
 
 Statements
-       :            Statement
-       | Statements Statement
+       |            Statement {$$.obj = new List<Statement>(); ($$.obj as List<Statement> ).Add($1.obj as Statement); }
+//----^^
+// Error: Syntax error, unexpected '|', expecting ':'
+// --------------------------------------------------
+       | Statements Statement {($$.obj as List<Statement> ).Add($1.obj as Statement); }
        ;
 
 Statement
@@ -196,8 +203,8 @@ LeftPart
        ;
 
 CompoundName
-       :                  IDENTIFIER
-       | CompoundName DOT IDENTIFIER
+       :                  IDENTIFIER {$$.obj = new List<Identifier>(); ($$.obj as List<Identifier> ).Add(new Identifier($1.identifier)); }
+       | CompoundName DOT IDENTIFIER {($$.obj as List<Identifier>).Add(new Identifier($3.identifier));}
        ;
 
 IfStatement
@@ -289,14 +296,14 @@ NewType
        ;
 
 Type
-       : INT        ArrayTail
-       | REAL       ArrayTail
-       | IDENTIFIER ArrayTail
+       : INT        ArrayTail {$$.obj = new IntType($2.intNumber == 1);}
+       | REAL       ArrayTail {$$.obj = new RealType($2.intNumber == 1);}
+       | IDENTIFIER ArrayTail {$$.obj = new CustomType(new Identifier($1.identifier), $2.intNumber == 1);}
        ;
 
 ArrayTail
-       : /* empty */
-       | LBRACKET RBRACKET
+       : /* empty */       {$$.intNumber = 0;}
+       | LBRACKET RBRACKET {$$.intNumber = 1;}
        ;
 
 %%

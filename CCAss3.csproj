@@ -81,6 +81,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ToyLang.Language.analyzer.lex</DependentUpon>
     </Compile>
+    <None Include="Program.Toy" />
     <None Include="ToyLang.Language.analyzer.lex">
       <DependentUpon>ToyLang.parser</DependentUpon>
     </None>

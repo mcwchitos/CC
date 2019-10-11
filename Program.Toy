@@ -1,0 +1,9 @@
+﻿IMPORT huy;
+IMPORT zalupa;
+
+CLASS chlen;{
+PUBLIC INT A;
+PRIVATE STATIC VOID main(INT a, INT b){
+REAL c;
+{}
+}}

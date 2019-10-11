@@ -83,8 +83,8 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 0; c.Body = $5.obj as ClassBody}
-       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 1;, c.Body = $6.obj as ClassBody}
+       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 0; c.Body = $5.obj as ClassBody;}
+       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 1; c.Body = $6.obj as ClassBody;}
        ;
 
 Extension
@@ -98,19 +98,19 @@ ClassBody
        ;
 
 ClassMembers
-       :              ClassMember {ClassBody b = new ClassBody(); $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration)}else{b.Methods.Add($1.obj as MethodDeclaration)}}
-       | ClassMembers ClassMember {ClassBody b = $$.obj as ClassBody; $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration)}else{b.Methods.Add($1.obj as MethodDeclaration)}}
+       :              ClassMember {ClassBody b = new ClassBody(); $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration);}else{b.Methods.Add($1.obj as MethodDeclaration);};}
+       | ClassMembers ClassMember {ClassBody b = $$.obj as ClassBody; $$.obj = b; if($2.intNumber == 0){b.Fields.Add($2.obj as FieldDeclaration);}else{b.Methods.Add($2.obj as MethodDeclaration);};}
        ;
 
 ClassMember
-       : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj}
-       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj}
+       : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj;}
+       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj; Console.WriteLine("qq");}
        ;
 
 FieldDeclaration
        : Visibility Staticness Type IDENTIFIER SEMICOLON 
        {FieldDeclaration f = new FieldDeclaration(); f.Visibility = $1.intNumber; f.Staticness = $2.intNumber;
-       f.Type = $3.obj; f.Id = new Identifier($4.identifier); $$.obj = f;}
+       f.Type = $3.obj as CType; f.Id = new Identifier($4.identifier); $$.obj = f;}
        ;
 
 Visibility
@@ -125,10 +125,10 @@ Staticness
        ;
 
 MethodDeclaration
-       : Visibility Staticness MethodType IDENTIFIER Parameters
-            Body  
-            {MethodDeclaration m = new MethodDeclaration(); m.Visibility = $1.intNumber; m.Staticness = $2.intNumber; m.MethodType=$3.obj; 
-            m.Id = new Identifier($4.identifier); m.Params = $5.obj as List<Parameter>; $$.obj = m;}
+       : Visibility Staticness MethodType IDENTIFIER Parameters Body   {MethodDeclaration m = new MethodDeclaration(); m.Visibility = $1.intNumber; m.Staticness = $2.intNumber;
+        m.MethodType= (CType) $3.obj; m.Id = new Identifier($4.identifier); m.Params = $5.obj as List<Parameter>; $$.obj = m; m.Body = $6.obj as MethodBody;}
+           
+            
        ;
 
 Parameters
@@ -137,12 +137,12 @@ Parameters
        ;
 
 ParameterList
-       :                     Parameter {$$.obj = new List<Parameter>(); ($$.obj as List<Parameter> ).Add($1.obj as Parameter); }
+       :                     Parameter {$$.obj = new List<Parameter>(); ($$.obj as List<Parameter> ).Add($1.obj as Parameter);}
        | ParameterList COMMA Parameter {($$.obj as List<Parameter>).Add($3.obj as Parameter);}
        ;
 
 Parameter
-       : Type IDENTIFIER {$$.obj = new Parameter($1.obj, new Identifier($2.identifier);) }
+       : Type IDENTIFIER {$$.obj = new Parameter($1.obj as CType, new Identifier($2.identifier)); }
        ;
 
 MethodType
@@ -151,17 +151,17 @@ MethodType
        ;
 
 Body
-       : LBRACE LocalDeclarations Statements RBRACE 
-       {MethodBody mb = new MethodBody(); mb.LocalDeclarations = $2.obj as List<LocalDeclaration>; mb.Statements = $3.obj as List<Statements>; }
+       : LBRACE RBRACE {$$.obj = new MethodBody();}
+       | LBRACE LocalDeclarations Statements RBRACE { Console.WriteLine("qq");MethodBody mb = new MethodBody(); mb.LocalDeclarations = $2.obj as List<LocalDeclaration>; mb.Statements = $3.obj as List<Statement>; $$.obj = mb;}
        ;
 
 LocalDeclarations
        :                   LocalDeclaration {$$.obj = new List<LocalDeclaration>(); ($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
-       | LocalDeclarations LocalDeclaration {($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
+       | LocalDeclarations LocalDeclaration {($$.obj as List<LocalDeclaration> ).Add($2.obj as LocalDeclaration); }
        ;
 
 LocalDeclaration
-       : Type IDENTIFIER SEMICOLON { LocalDeclaration ld = new LocalDeclaration(); ld.Type = $1.obj; ld.Id = new Identifier($2.identifier);}
+       : Type IDENTIFIER SEMICOLON { LocalDeclaration ld = new LocalDeclaration(); ld.Type = $1.obj as CType; ld.Id = new Identifier($2.identifier); $$.obj=ld;}
        ;
 
 Statements
@@ -288,8 +288,8 @@ Type
        ;
 
 ArrayTail
-       : /* empty */       {$$.intNumber = 0}
-       | LBRACKET RBRACKET {$$.intNumber = 1}
+       : /* empty */       {$$.intNumber = 0;}
+       | LBRACKET RBRACKET {$$.intNumber = 1;}
        ;
 
 %%

@@ -48,8 +48,22 @@ namespace CCAss3
         
     }
 
+
     class Statement : Node
     {
+        public Statement(){}
+    }
+
+    class Assignment : Statement{
+
+    }
+
+    class IfStatement : Statement{
+
+    }
+
+    class WhileStatement : Statement{
+        
     }
 
     class IntNode : Expression
@@ -136,42 +150,47 @@ namespace CCAss3
             Left = left;
             Right = right;
         }
+
     }
 
     class FieldDeclaration : Statement
     {
         public int Visibility;
         public int Staticness;
-        public int Type;
+        public CType Type;
         public Identifier Id;
 
-        public FieldDeclaration(int visibility, int staticness, int type, Identifier id){
+        public FieldDeclaration(int visibility, int staticness, CType type, Identifier id){
             Visibility = visibility;
             Staticness = staticness;
             Type = type;
             Id = id;
         }
 
+        public FieldDeclaration() { }
+
     }
 
     class Parameter{
-        public int Type;
+        public CType Type;
         public Identifier Id;
 
-        public Parameter(int type, Identifier id){
+        public Parameter(CType type, Identifier id){
             Type = type;
             Id = id;
         }
     }
 
     class LocalDeclaration{
-        public int Type;
+        public CType Type;
         public Identifier Id;
 
-        public LocalDeclaration(int type, Identifier id){
+        public LocalDeclaration(CType type, Identifier id){
             Type = type;
             Id = id;
         }
+
+        public LocalDeclaration(){}
     }
 
   
@@ -179,12 +198,12 @@ namespace CCAss3
     {
         public int Visibility;
         public int Staticness;
-        public int MethodType;
+        public CType MethodType;
         public Identifier Id;
         public List<Parameter> Params = new List<Parameter>();
         public MethodBody Body;
 
-        public MethodDeclaration(int visibility, int staticness, int methodtype, Identifier id, List<Parameter> parameters, MethodBody body){
+        public MethodDeclaration(int visibility, int staticness, CType methodtype, Identifier id, List<Parameter> parameters, MethodBody body){
             Visibility = visibility;
             Staticness = staticness;
             MethodType = methodtype;
@@ -192,6 +211,8 @@ namespace CCAss3
             Params = parameters;
             Body = body;
         }
+
+        public MethodDeclaration() { }
     }
 
     class MethodBody
@@ -203,6 +224,8 @@ namespace CCAss3
             LocalDeclarations = localdeclarations;
             Statements = statements;
         }
+
+        public MethodBody(){}
     }
 
     class ClassDeclaration : Statement

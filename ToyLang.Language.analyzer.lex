@@ -18,9 +18,10 @@ Space           [ \t]
 /* Scanner body */
 
 {Space}+		/* skip */
+{Eol}+		/* skip */
 
 
-[ \t\n]                 ;
+[ \t\n]                 /* skip */
 "IMPORT"                {return (int)Token.IMPORT;}
 "CLASS"                 {return (int)Token.CLASS;}
 "EXTENDS"               {return (int)Token.EXTENDS;}
@@ -59,5 +60,4 @@ Space           [ \t]
 "/"                     {return (int)Token.DIVIDE;}
 ";"                     {return (int)Token.SEMICOLON;}
 .                       {Console.WriteLine("error"); yyerror("PIZDEC");}
-
 %%

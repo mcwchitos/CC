@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.2.2
 //  Machine:  HUY001
-//  DateTime: 10/10/2019 11:08:15 PM
+//  DateTime: 10/11/2019 6:49:06 PM
 //  UserName: huy
 // ==========================================================================
 
@@ -19,7 +19,6 @@
 Eol             (\r\n?|\n)
 NotWh           [^ \t\r\n]
 Space           [ \t]
-Number          [0-9]+
 
 %{
 
@@ -29,12 +28,17 @@ Number          [0-9]+
 
 /* Scanner body */
 
-{Number}		{ Console.WriteLine("token: {0}", yytext);		GetNumber(); return (int)Token.NUMBER; }
-
 {Space}+		/* skip */
+{Eol}+		/* skip */
+//^^^^
+// Warning: This pattern always overrides "[ \t\n]" 
+// -------------------------------------------------
 
 
-[ \t\n]                 ;
+[ \t\n]                 /* skip */
+//^^^^^
+// Warning: This pattern always overridden by "{Eol}+" 
+// ----------------------------------------------------
 "IMPORT"                {return (int)Token.IMPORT;}
 "CLASS"                 {return (int)Token.CLASS;}
 "EXTENDS"               {return (int)Token.EXTENDS;}
@@ -52,11 +56,8 @@ Number          [0-9]+
 "NEW"                   {return (int)Token.NEW;}
 "INT"                   {return (int)Token.INT;}
 "REAL"                  {return (int)Token.REAL;}
-[a-zA-Z_][a-zA-Z0-9_]*  {return (int)Token.IDENTIFIER;}
-[0-9]+.[0-9]*?          {GetNumber(); return (int)Token.NUMBER;}
-//-----------^
-// Error: Extra characters at end of regular expression
-// ----------------------------------------------------
+[a-zA-Z_][a-zA-Z0-9_]*  {GetIdentifier(); return (int)Token.IDENTIFIER;}
+[0-9]*	                {GetNumber(); return (int)Token.NUMBER;}
 "="                     {return (int)Token.ASSIGN;}
 "=="                    {return (int)Token.EQUAL;}
 "!="                    {return (int)Token.NOT_EQUAL;}
@@ -75,7 +76,6 @@ Number          [0-9]+
 "*"                     {return (int)Token.MULTIPLY;}
 "/"                     {return (int)Token.DIVIDE;}
 ";"                     {return (int)Token.SEMICOLON;}
-.                       {Console.WriteLine("error"); yyterminate();}
-
+.                       {Console.WriteLine("error"); yyerror("PIZDEC");}
 %%// ==========================================================================
 
