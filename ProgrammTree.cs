@@ -17,6 +17,7 @@ namespace CCAss3
         {
             isArray = arr;
         }
+
     }
 
     class RealType : CType
@@ -45,7 +46,92 @@ namespace CCAss3
 
     class Expression : Node
     {
-        
+
+    }
+
+    class IntExpression : Expression
+    {
+        public int Value;
+
+        IntExpression(int value)
+        {
+            Value = value;
+        }
+    }
+
+    class RealExpression : Expression
+    {
+        public bool Value;
+
+        RealExpression(bool value)
+        {
+            Value = value;
+        }
+    }
+
+    class IdentExpression : Expression
+    {
+        public List<Identifier> Id;
+
+        IdentExpression()
+        {
+        }
+    }
+
+    /// <summary>
+    /// |>| is 0
+    /// |<| is 1
+    /// |!=| is 2
+    /// |==| is 3
+    /// </summary>
+    class BinaryRelation : Expression
+    {
+        public Expression Left;
+        public Expression Right;
+        public int OP;
+
+        public BinaryRelation(Expression left, Expression right, int op)
+        {
+            Left = left;
+            Right = right;
+            OP = op;
+        }
+    }
+
+    /// <summary>
+    /// 0 is pluss
+    /// 1 is minus
+    /// 2 is multiplication
+    /// 3 is division
+    /// </summary>
+    class BinaryOperation : Expression
+    {
+        public int OpType;
+        public Expression Left;
+        public Expression Right;
+
+        public BinaryOperation(Expression left, Expression right, int opType)
+        {
+            OpType = opType;
+            Left = left;
+            Right = right;
+        }
+    }
+
+    class CreateExpression : Expression
+    {
+        public CType NType;
+        public Expression Body;
+
+        public CreateExpression(CType nType)
+        {
+            NType = nType;
+        }
+        public CreateExpression(CType nType, Expression body)
+        {
+            NType = nType;
+            Body = body;
+        }
     }
 
 
@@ -64,6 +150,22 @@ namespace CCAss3
 
     class WhileStatement : Statement{
         
+    }
+
+    class ReturnStatement : Statement {
+
+    }
+
+    class CallStatement : Statement{
+
+    }
+
+    class PrintStatement : Statement{
+
+    }
+
+    class Block : Statement{
+
     }
 
     class IntNode : Expression
@@ -93,20 +195,6 @@ namespace CCAss3
         public Identifier(string value)
         {
             Value = value;
-        }
-    }
-
-    class BinaryOperation : Expression
-    {
-        public int OpType;
-        public Expression Left;
-        public Expression Right;
-
-        public BinaryOperation(int opType, Expression left, Expression right )
-        {
-            OpType = opType;
-            Left = left;
-            Right = right;
         }
     }
 

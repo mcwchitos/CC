@@ -227,58 +227,58 @@ Block
        ;
 
 Relation
-       : Expression
-       | Expression RelationalOperator Expression
+       : Expression {$$.obj = $1.obj;}
+       | Expression RelationalOperator Expression {$$.obj = new BinaryRelation($1.obj as Expression, $3.obj as Expression, $2.intValue);}
        ;
 
 RelationalOperator
-       : LESS
-       | GREATER
-       | EQUAL
-       | NOT_EQUAL
+       : LESS {$$.intValue = 0;}
+       | GREATER {$$.intValue = 1;}
+       | EQUAL {$$.intValue = 3;}
+       | NOT_EQUAL {$$.intValue = 2;}
        ;
 
 Expression
-       :         Term Terms
-       | AddSign Term Terms
+       :         Term Terms {BinaryOperation o = $2.obj as BinaryOperaton; if(o != null){ o.Left = $2 as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
+       | AddSign Term Terms {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
        ;
 
 AddSign
-       : PLUS
-       | MINUS
+       : PLUS {$$.intValue = 0;}
+       | MINUS {$$.intValue = 1;}
        ;
 
 Terms
        : /* empty */
-       | AddSign Term Terms
+       | AddSign Term Terms {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
        ;
 
 Term
-       : Factor Factors
+       : Factor Factors {BinaryOperation o = $2.obj as BinaryOperaton; if(o != null){ o.Left = $2 as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
        ;
 
 Factors
        : /* empty */
-       | MultSign Factor Factors
+       | MultSign Factor Factors {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
        ;
 
 MultSign
-       : MULTIPLY
-       | DIVIDE
+       : MULTIPLY {$$.intValue = 2;}
+       | DIVIDE {$$.intValue =3;}
        ;
 
 Factor
-       : NUMBER
-       | LeftPart
-       | NULL
-       | NEW NewType
-       | NEW NewType LBRACKET Expression RBRACKET
+       : NUMBER {$$.obj = new IntExpression($1.intValue);}
+       | LeftPart {$$.obj = $1.obj;}
+       | NULL {$$.obj = new Expression();}
+       | NEW NewType {$$.obj = new CreateExpression($2.obj as CType);}
+       | NEW NewType LBRACKET Expression RBRACKET {$$.obj = new CreateExpression($2.obj as CType, $4.obj as Expression);}
        ;
 
 NewType
-       : INT
-       | REAL
-       | IDENTIFIER
+       : INT {$$.obj = new IntType(false);}
+       | REAL {$$.obj = new RealType(false);}
+       | IDENTIFIER {$$.obj = new CustomType(new Identifier($1.identifier), false);}
        ;
 
 Type
