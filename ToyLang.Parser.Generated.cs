@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/11/2019 6:49:06 PM
+// DateTime: 10/11/2019 9:16:54 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/11/2019 6:49:03 PM>
+// Input file <ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM>
 
 // options: no-lines gplex
 
@@ -30,6 +30,7 @@ internal enum Token {error=2,EOF=3,IDENTIFIER=4,NUMBER=5,IMPORT=6,
 internal partial struct ValueType
 { 
 			public int intNumber;
+			public int intValue;
 			public double realNumber;
 			public string identifier; 
 			public Node node;
@@ -57,9 +58,9 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
-  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 6:49:03 PM
+  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM
        public RootNode Root = new RootNode();
-  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 6:49:03 PM
+  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM
 
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
@@ -446,11 +447,146 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
       case 38: // Statements -> Statements, Statement
 {(CurrentSemanticValue.obj as List<Statement> ).Add(ValueStack[ValueStack.Depth-2].obj as Statement); }
         break;
+      case 39: // Statement -> Assignment
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 40: // Statement -> IfStatement
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 41: // Statement -> WhileStatement
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 42: // Statement -> ReturnStatement
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 43: // Statement -> CallStatement
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 44: // Statement -> PrintStatement
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 45: // Statement -> Block
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 46: // Assignment -> LeftPart, ASSIGN, Expression, SEMICOLON
+{CurrentSemanticValue.obj = new Assignment(ValueStack[ValueStack.Depth-4].obj as Expression, ValueStack[ValueStack.Depth-2].obj as Expression);}
+        break;
+      case 47: // LeftPart -> CompoundName
+{CurrentSemanticValue.obj = new LeftPart(ValueStack[ValueStack.Depth-1].obj as List<Identifier>);}
+        break;
+      case 48: // LeftPart -> CompoundName, LBRACKET, Expression, RBRACKET
+{CurrentSemanticValue.obj = new LeftPart(ValueStack[ValueStack.Depth-4].obj as List<Identifier>, ValueStack[ValueStack.Depth-2].obj as Expression);}
+        break;
       case 49: // CompoundName -> IDENTIFIER
 {CurrentSemanticValue.obj = new List<Identifier>(); (CurrentSemanticValue.obj as List<Identifier> ).Add(new Identifier(ValueStack[ValueStack.Depth-1].identifier)); }
         break;
       case 50: // CompoundName -> CompoundName, DOT, IDENTIFIER
 {(CurrentSemanticValue.obj as List<Identifier>).Add(new Identifier(ValueStack[ValueStack.Depth-1].identifier));}
+        break;
+      case 51: // IfStatement -> IF, LPAREN, Relation, RPAREN, Statement
+{CurrentSemanticValue.obj = new IfStatement(ValueStack[ValueStack.Depth-3].obj as Expression, ValueStack[ValueStack.Depth-1].obj as Statement);}
+        break;
+      case 52: // IfStatement -> IF, LPAREN, Relation, RPAREN, Statement, ELSE, Statement
+{CurrentSemanticValue.obj = new IfStatement(ValueStack[ValueStack.Depth-5].obj as Expression, ValueStack[ValueStack.Depth-3].obj as Statement, ValueStack[ValueStack.Depth-1].obj as Statement);}
+        break;
+      case 53: // WhileStatement -> WHILE, Relation, LOOP, Statement, SEMICOLON
+{CurrentSemanticValue.obj = new WhileStatement(ValueStack[ValueStack.Depth-4].obj as Expression, ValueStack[ValueStack.Depth-2].obj as Statement);}
+        break;
+      case 54: // ReturnStatement -> RETURN, SEMICOLON
+{CurrentSemanticValue.obj = new ReturnStatement();}
+        break;
+      case 55: // ReturnStatement -> RETURN, Expression, SEMICOLON
+{CurrentSemanticValue.obj = new ReturnStatement(ValueStack[ValueStack.Depth-2].obj as Expression);}
+        break;
+      case 56: // CallStatement -> CompoundName, LPAREN, RPAREN, SEMICOLON
+{CurrentSemanticValue.obj = new CallStatement(ValueStack[ValueStack.Depth-4].obj as List<Identifier>);}
+        break;
+      case 57: // CallStatement -> CompoundName, LPAREN, ArgumentList, RPAREN, SEMICOLON
+{CurrentSemanticValue.obj = new CallStatement(ValueStack[ValueStack.Depth-5].obj as List<Identifier>, ValueStack[ValueStack.Depth-3].obj as List<Expression>);}
+        break;
+      case 58: // ArgumentList -> Expression
+{List<Expression> e = new List<Expression>(); e.Add(ValueStack[ValueStack.Depth-1].obj as Expression);}
+        break;
+      case 59: // ArgumentList -> ArgumentList, COMMA, Expression
+{List<Expression> e = CurrentSemanticValue.obj as List<Expression>; e.Add(ValueStack[ValueStack.Depth-1].obj as Expression);}
+        break;
+      case 60: // PrintStatement -> PRINT, Expression, SEMICOLON
+{CurrentSemanticValue.obj = new PrintStatement(ValueStack[ValueStack.Depth-2].obj as Expression);}
+        break;
+      case 61: // Block -> LBRACE, RBRACE
+{CurrentSemanticValue.obj = new Block();}
+        break;
+      case 62: // Block -> LBRACE, Statements, RBRACE
+{CurrentSemanticValue.obj = new Block(ValueStack[ValueStack.Depth-2].obj as List<Statement>);}
+        break;
+      case 63: // Relation -> Expression
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 64: // Relation -> Expression, RelationalOperator, Expression
+{CurrentSemanticValue.obj = new BinaryRelation(ValueStack[ValueStack.Depth-3].obj as Expression, ValueStack[ValueStack.Depth-1].obj as Expression, ValueStack[ValueStack.Depth-2].intValue);}
+        break;
+      case 65: // RelationalOperator -> LESS
+{CurrentSemanticValue.intValue = 0;}
+        break;
+      case 66: // RelationalOperator -> GREATER
+{CurrentSemanticValue.intValue = 1;}
+        break;
+      case 67: // RelationalOperator -> EQUAL
+{CurrentSemanticValue.intValue = 3;}
+        break;
+      case 68: // RelationalOperator -> NOT_EQUAL
+{CurrentSemanticValue.intValue = 2;}
+        break;
+      case 69: // Expression -> Term, Terms
+{BinaryOperation o = ValueStack[ValueStack.Depth-1].obj as BinaryOperation; if(o != null){ o.Left = ValueStack[ValueStack.Depth-2].obj as Expression; CurrentSemanticValue.obj = o;}else{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-2].obj;}}
+        break;
+      case 70: // Expression -> AddSign, Term, Terms
+{CurrentSemanticValue.obj = new BinaryOperation(null, ValueStack[ValueStack.Depth-2].obj as Expression, ValueStack[ValueStack.Depth-3].intValue); BinaryOperation o = ValueStack[ValueStack.Depth-1].obj as BinaryOperation; if(o != null) o.Left = ValueStack[ValueStack.Depth-2].obj as Expression; }
+        break;
+      case 71: // AddSign -> PLUS
+{CurrentSemanticValue.intValue = 0;}
+        break;
+      case 72: // AddSign -> MINUS
+{CurrentSemanticValue.intValue = 1;}
+        break;
+      case 74: // Terms -> AddSign, Term, Terms
+{CurrentSemanticValue.obj = new BinaryOperation(null, ValueStack[ValueStack.Depth-2].obj as Expression, ValueStack[ValueStack.Depth-3].intValue); BinaryOperation o = ValueStack[ValueStack.Depth-1].obj as BinaryOperation; if(o != null) o.Left = ValueStack[ValueStack.Depth-2].obj as Expression; }
+        break;
+      case 75: // Term -> Factor, Factors
+{BinaryOperation o = ValueStack[ValueStack.Depth-1].obj as BinaryOperation; if(o != null){ o.Left = ValueStack[ValueStack.Depth-2].obj as Expression; CurrentSemanticValue.obj = o;}else{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-2].obj;}}
+        break;
+      case 77: // Factors -> MultSign, Factor, Factors
+{CurrentSemanticValue.obj = new BinaryOperation(null, ValueStack[ValueStack.Depth-2].obj as Expression, ValueStack[ValueStack.Depth-3].intValue); BinaryOperation o = ValueStack[ValueStack.Depth-1].obj as BinaryOperation; if(o != null) o.Left = ValueStack[ValueStack.Depth-2].obj as Expression; }
+        break;
+      case 78: // MultSign -> MULTIPLY
+{CurrentSemanticValue.intValue = 2;}
+        break;
+      case 79: // MultSign -> DIVIDE
+{CurrentSemanticValue.intValue =3;}
+        break;
+      case 80: // Factor -> NUMBER
+{CurrentSemanticValue.obj = new IntExpression(ValueStack[ValueStack.Depth-1].intNumber);}
+        break;
+      case 81: // Factor -> LeftPart
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
+        break;
+      case 82: // Factor -> NULL
+{CurrentSemanticValue.obj = new Expression();}
+        break;
+      case 83: // Factor -> NEW, NewType
+{CurrentSemanticValue.obj = new CreateExpression(ValueStack[ValueStack.Depth-1].obj as CType);}
+        break;
+      case 84: // Factor -> NEW, NewType, LBRACKET, Expression, RBRACKET
+{CurrentSemanticValue.obj = new CreateExpression(ValueStack[ValueStack.Depth-4].obj as CType, ValueStack[ValueStack.Depth-2].obj as Expression);}
+        break;
+      case 85: // NewType -> INT
+{CurrentSemanticValue.obj = new IntType(false);}
+        break;
+      case 86: // NewType -> REAL
+{CurrentSemanticValue.obj = new RealType(false);}
+        break;
+      case 87: // NewType -> IDENTIFIER
+{CurrentSemanticValue.obj = new CustomType(new Identifier(ValueStack[ValueStack.Depth-1].identifier), false);}
         break;
       case 88: // Type -> INT, ArrayTail
 {CurrentSemanticValue.obj = new IntType(ValueStack[ValueStack.Depth-1].intNumber == 1);}

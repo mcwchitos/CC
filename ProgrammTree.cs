@@ -11,6 +11,17 @@ namespace CCAss3
         public bool isArray;
     }
 
+
+    class Identifier : Expression
+    {
+        public string Value;
+
+        public Identifier(string value)
+        {
+            Value = value;
+        }
+    }
+
     class IntType : CType
     {
         public IntType(bool arr)
@@ -53,7 +64,7 @@ namespace CCAss3
     {
         public int Value;
 
-        IntExpression(int value)
+        public IntExpression(int value)
         {
             Value = value;
         }
@@ -63,7 +74,7 @@ namespace CCAss3
     {
         public bool Value;
 
-        RealExpression(bool value)
+        public RealExpression(bool value)
         {
             Value = value;
         }
@@ -73,7 +84,7 @@ namespace CCAss3
     {
         public List<Identifier> Id;
 
-        IdentExpression()
+        public IdentExpression()
         {
         }
     }
@@ -171,20 +182,27 @@ namespace CCAss3
 
     class IfStatement : Statement{
         public Expression Condition;
-        public List<Statement> Statements = new List<Statement>();
+        public Statement TrueStatement;
+        public Statement FalseStatement;
 
-        public IfStatement(Expression condition, List<Statement> statements){
+        public IfStatement(Expression condition, Statement trueStatement){
             Condition = condition;
-            Statements = statements;
+            TrueStatement = trueStatement;
+        }
+        public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement)
+        {
+            Condition = condition;
+            TrueStatement = trueStatement;
+            FalseStatement = falseStatement;
         }
 
-
+    }
 
     class WhileStatement : Statement{
         public Expression Condition;
-        public List<Statement> Statements = new List<Statement>();
+        public Statement Statements;
 
-        public WhileStatement(Expression condition, List<Statement> statements){
+        public WhileStatement(Expression condition, Statement statements){
             Condition = condition;
             Statements = statements;
         }
@@ -195,33 +213,58 @@ namespace CCAss3
 
         public ReturnStatement(Expression exp){
             expression = exp;
-        }       
+        }
+
+        public ReturnStatement()
+        {
+
+        }
     }
 
     class CallStatement : Statement{
         public List<Identifier> Id = new List<Identifier>();
+        public List<Expression> Args = new List<Expression>();
 
-       public CallStatement(List<Identifier> id){
-           Id = id;
-       }
+        public CallStatement(List<Identifier> id){
+            Id = id;
+        }
+
+        public CallStatement(List<Identifier> id, List<Expression> args){
+            Id = id;
+            Args = args;
+        }
     }
 
-    class Identifier{
-            public string Id;
-            public Identifier(string id){
-                Id = id;
-            }
+    class PrintStatement : Statement{
+        public Expression expression;
+
+        public PrintStatement(Expression exp){
+            expression = exp;
+        }
     }
+
+    class Block : Statement{
+        public List<Statement> expression = new List<Statement>();
+
+        public Block(List<Statement> exp){
+            expression = exp;
+        }
+
+        public Block(){
+        }
+    }
+    
 
     class IntNode : Expression  
     {
-    public int Value;
+        public int Value;
 
-    public IntNode(int value)
-    {
-        Value = value;
+        public IntNode(int value)
+        {
+            Value = value;
+        }
     }
-
+    
     class RealNode : Expression
     {
         public double Value;
@@ -232,15 +275,6 @@ namespace CCAss3
         }
     }
 
-    class Identifier : Expression
-    {
-        public string Value;
-
-        public Identifier(string value)
-        {
-            Value = value;
-        }
-    }
 
     class RelateOperation : Expression
     {

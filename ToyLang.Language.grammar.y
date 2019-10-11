@@ -10,6 +10,7 @@
 
 %union { 
 			public int intNumber;
+			public int intValue;
 			public double realNumber;
 			public string identifier; 
 			public Node node;
@@ -180,7 +181,7 @@ Statement
        ;
 
 Assignment
-       : LeftPart ASSIGN Expression SEMICOLON {$$.obj = new Assigment($1.obj as (Expression), $2.obj as (Expression));}
+       : LeftPart ASSIGN Expression SEMICOLON {$$.obj = new Assignment($1.obj as Expression, $3.obj as Expression);}
        ;
 
 LeftPart
@@ -194,36 +195,36 @@ CompoundName
        ;
 
 IfStatement
-       : IF LPAREN Relation RPAREN Statement {IfStatement i = new IfStatement(); i.Condition = $3.obj as Expression; i.Statement = $5.obj as Expression;}
-       | IF LPAREN Relation RPAREN Statement ELSE Statement
+       : IF LPAREN Relation RPAREN Statement {$$.obj = new IfStatement($3.obj as Expression, $5.obj as Statement);}
+       | IF LPAREN Relation RPAREN Statement ELSE Statement {$$.obj = new IfStatement($3.obj as Expression, $5.obj as Statement, $7.obj as Statement);}
        ;
 
 WhileStatement
-       : WHILE Relation LOOP Statement SEMICOLON
+       : WHILE Relation LOOP Statement SEMICOLON {$$.obj = new WhileStatement($2.obj as Expression, $4.obj as Statement);}
        ;
 
 ReturnStatement
-       : RETURN            SEMICOLON
-       | RETURN Expression SEMICOLON
+       : RETURN            SEMICOLON {$$.obj = new ReturnStatement();}
+       | RETURN Expression SEMICOLON {$$.obj = new ReturnStatement($2.obj as Expression);}
        ;
 
 CallStatement
-       : CompoundName LPAREN              RPAREN SEMICOLON
-       | CompoundName LPAREN ArgumentList RPAREN SEMICOLON
+       : CompoundName LPAREN              RPAREN SEMICOLON {$$.obj = new CallStatement($1.obj as List<Identifier>);}
+       | CompoundName LPAREN ArgumentList RPAREN SEMICOLON {$$.obj = new CallStatement($1.obj as List<Identifier>, $3.obj as List<Expression>);}
        ;
 
 ArgumentList
-       :                    Expression
-       | ArgumentList COMMA Expression
+       :                    Expression {List<Expression> e = new List<Expression>(); e.Add($1.obj as Expression);}
+       | ArgumentList COMMA Expression {List<Expression> e = $$.obj as List<Expression>; e.Add($3.obj as Expression);}
        ;
 
 PrintStatement
-       : PRINT Expression SEMICOLON
+       : PRINT Expression SEMICOLON {$$.obj = new PrintStatement($2.obj as Expression);}
        ;
 
 Block
-       : LBRACE            RBRACE
-       | LBRACE Statements RBRACE
+       : LBRACE            RBRACE {$$.obj = new Block();}
+       | LBRACE Statements RBRACE {$$.obj = new Block($2.obj as List<Statement>);}
        ;
 
 Relation
@@ -239,8 +240,8 @@ RelationalOperator
        ;
 
 Expression
-       :         Term Terms {BinaryOperation o = $2.obj as BinaryOperaton; if(o != null){ o.Left = $2 as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
-       | AddSign Term Terms {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
+       :         Term Terms {BinaryOperation o = $2.obj as BinaryOperation; if(o != null){ o.Left = $1.obj as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
+       | AddSign Term Terms {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
        ;
 
 AddSign
@@ -250,16 +251,16 @@ AddSign
 
 Terms
        : /* empty */
-       | AddSign Term Terms {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
+       | AddSign Term Terms {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
        ;
 
 Term
-       : Factor Factors {BinaryOperation o = $2.obj as BinaryOperaton; if(o != null){ o.Left = $2 as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
+       : Factor Factors {BinaryOperation o = $2.obj as BinaryOperation; if(o != null){ o.Left = $1.obj as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
        ;
 
 Factors
        : /* empty */
-       | MultSign Factor Factors {$$.obj = new Binaryoperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $2.obj as BinaryOperaton; if(o != null) o.Left = $2 as Expression; }
+       | MultSign Factor Factors {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
        ;
 
 MultSign
@@ -268,7 +269,7 @@ MultSign
        ;
 
 Factor
-       : NUMBER {$$.obj = new IntExpression($1.intValue);}
+       : NUMBER {$$.obj = new IntExpression($1.intNumber);}
        | LeftPart {$$.obj = $1.obj;}
        | NULL {$$.obj = new Expression();}
        | NEW NewType {$$.obj = new CreateExpression($2.obj as CType);}
