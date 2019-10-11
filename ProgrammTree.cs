@@ -118,6 +118,23 @@ namespace CCAss3
         }
     }
 
+    class LeftPart : Expression
+    {
+        public List<Identifier> CompoundName;
+        public Expression Expression;
+
+        public LeftPart(List<Identifier> name, Expression expression)
+        {
+            CompoundName = name;
+            Expression = expression;
+        }
+
+        public LeftPart(List<Identifier> name)
+        {
+            CompoundName = name;
+        }
+    }
+
     class CreateExpression : Expression
     {
         public CType NType;
@@ -141,41 +158,68 @@ namespace CCAss3
     }
 
     class Assignment : Statement{
+        public Expression LeftPart;
+        public Expression RightPart;
 
+        public Assignment(Expression leftPart, Expression rightPart)
+        {
+            LeftPart = leftPart;
+            RightPart = rightPart;
+        }
     }
+
 
     class IfStatement : Statement{
+        public Expression Condition;
+        public List<Statement> Statements = new List<Statement>();
 
-    }
+        public IfStatement(Expression condition, List<Statement> statements){
+            Condition = condition;
+            Statements = statements;
+        }
+
+
 
     class WhileStatement : Statement{
-        
+        public Expression Condition;
+        public List<Statement> Statements = new List<Statement>();
+
+        public WhileStatement(Expression condition, List<Statement> statements){
+            Condition = condition;
+            Statements = statements;
+        }
     }
 
-    class ReturnStatement : Statement {
+    class ReturnStatement : Statement{
+        public Expression expression;
 
+        public ReturnStatement(Expression exp){
+            expression = exp;
+        }       
     }
 
     class CallStatement : Statement{
+        public List<Identifier> Id = new List<Identifier>();
 
+       public CallStatement(List<Identifier> id){
+           Id = id;
+       }
     }
 
-    class PrintStatement : Statement{
-
+    class Identifier{
+            public string Id;
+            public Identifier(string id){
+                Id = id;
+            }
     }
 
-    class Block : Statement{
-
-    }
-
-    class IntNode : Expression
+    class IntNode : Expression  
     {
-        public int Value;
+    public int Value;
 
-        public IntNode(int value)
-        {
-            Value = value;
-        }
+    public IntNode(int value)
+    {
+        Value = value;
     }
 
     class RealNode : Expression

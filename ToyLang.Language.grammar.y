@@ -170,22 +170,22 @@ Statements
        ;
 
 Statement
-       : Assignment
-       | IfStatement
-       | WhileStatement
-       | ReturnStatement
-       | CallStatement
-       | PrintStatement
-       | Block
+       : Assignment {$$.obj = $1.obj;}
+       | IfStatement {$$.obj = $1.obj;}
+       | WhileStatement {$$.obj = $1.obj;}
+       | ReturnStatement {$$.obj = $1.obj;}
+       | CallStatement {$$.obj = $1.obj;}
+       | PrintStatement {$$.obj = $1.obj;}
+       | Block {$$.obj = $1.obj;}
        ;
 
 Assignment
-       : LeftPart ASSIGN Expression SEMICOLON
+       : LeftPart ASSIGN Expression SEMICOLON {$$.obj = new Assigment($1.obj as (Expression), $2.obj as (Expression));}
        ;
 
 LeftPart
-       : CompoundName
-       | CompoundName LBRACKET Expression RBRACKET
+       : CompoundName {$$.obj = new LeftPart($1.obj as List<Identifier>);}
+       | CompoundName LBRACKET Expression RBRACKET {$$.obj = new LeftPart($1.obj as List<Identifier>, $3.obj as Expression);}
        ;
 
 CompoundName
@@ -194,7 +194,7 @@ CompoundName
        ;
 
 IfStatement
-       : IF LPAREN Relation RPAREN Statement
+       : IF LPAREN Relation RPAREN Statement {IfStatement i = new IfStatement(); i.Condition = $3.obj as Expression; i.Statement = $5.obj as Expression;}
        | IF LPAREN Relation RPAREN Statement ELSE Statement
        ;
 
