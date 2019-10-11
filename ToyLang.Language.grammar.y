@@ -138,7 +138,7 @@ Parameters
 
 ParameterList
        :                     Parameter {$$.obj = new List<Parameter>(); ($$.obj as List<Parameter> ).Add($1.obj as Parameter); }
-       | ParameterList COMMA Parameter {($$.obj as List<Parameter>).Add($1.obj as Parameter);}
+       | ParameterList COMMA Parameter {($$.obj as List<Parameter>).Add($3.obj as Parameter);}
        ;
 
 Parameter
@@ -151,12 +151,13 @@ MethodType
        ;
 
 Body
-       : LBRACE LocalDeclarations Statements RBRACE
+       : LBRACE LocalDeclarations Statements RBRACE 
+       {MethodBody mb = new MethodBody(); mb.LocalDeclarations = $2.obj as List<LocalDeclaration>; mb.Statements = $3.obj as List<Statements>; }
        ;
 
 LocalDeclarations
-       :                   LocalDeclaration
-       | LocalDeclarations LocalDeclaration
+       :                   LocalDeclaration {$$.obj = new List<LocalDeclaration>(); ($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
+       | LocalDeclarations LocalDeclaration {($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
        ;
 
 LocalDeclaration
@@ -164,8 +165,8 @@ LocalDeclaration
        ;
 
 Statements
-       :            Statement
-       | Statements Statement
+       :            Statement {$$.obj = new List<Statement>(); ($$.obj as List<Statement> ).Add($1.obj as Statement); }
+       | Statements Statement {($$.obj as List<Statement> ).Add($1.obj as Statement); }
        ;
 
 Statement

@@ -182,14 +182,26 @@ namespace CCAss3
         public int MethodType;
         public Identifier Id;
         public List<Parameter> Params = new List<Parameter>();
-        public List<LocalDeclaration> LocalFields = new List<LocalDeclaration>();
+        public MethodBody Body;
 
-        public MethodDeclaration(int visibility, int staticness, CType type, int methodtype, Identifier id, List<Parameter> parameters){
+        public MethodDeclaration(int visibility, int staticness, int methodtype, Identifier id, List<Parameter> parameters, MethodBody body){
             Visibility = visibility;
             Staticness = staticness;
             MethodType = methodtype;
             Id = id;
             Params = parameters;
+            Body = body;
+        }
+    }
+
+    class MethodBody
+    {
+        public List<LocalDeclaration> LocalDeclarations = new List<LocalDeclaration>();
+        public List<Statement> Statements = new List<Statement>();
+
+        public MethodBody(List<LocalDeclaration> localdeclarations, List<Statement> statements){
+            LocalDeclarations = localdeclarations;
+            Statements = statements;
         }
     }
 
