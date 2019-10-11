@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/11/2019 3:39:18 PM
+// DateTime: 10/11/2019 3:55:51 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM>
+// Input file <ToyLang.Language.grammar.y - 10/11/2019 3:55:50 PM>
 
 // options: no-lines gplex
 
@@ -33,6 +33,7 @@ internal partial struct ValueType
 			public double realNumber;
 			public string identifier; 
 			public Node node;
+			public object obj;
 	   }
 // Abstract base class for GPLEX scanners
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
@@ -56,9 +57,9 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
-  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM
+  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:55:50 PM
        public RootNode Root = new RootNode();
-  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM
+  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:55:50 PM
 
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
@@ -350,7 +351,7 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {Root.Imports.Add(new Identifier(ValueStack[ValueStack.Depth-2].identifier));}
         break;
       case 8: // ClassDeclaration -> CLASS, CompoundName, Extension, SEMICOLON, ClassBody
-{ClassDeclaration c = new ClassDeclaration(); c.Id=(Identifier) ValueStack[ValueStack.Depth-4].node; Root.Classes.Add(c);}
+{ClassDeclaration c = new ClassDeclaration(); c.Id= ValueStack[ValueStack.Depth-4].obj as List<Identifier>; c.Extends = (Identifier) ValueStack[ValueStack.Depth-3].node; Root.Classes.Add(c);}
         break;
       case 11: // Extension -> EXTENDS, IDENTIFIER
 {CurrentSemanticValue.node = new Identifier(ValueStack[ValueStack.Depth-1].identifier);}
@@ -359,7 +360,10 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {}
         break;
       case 48: // CompoundName -> IDENTIFIER
-{CurrentSemanticValue.node = new Identifier(ValueStack[ValueStack.Depth-1].identifier); }
+{CurrentSemanticValue.obj = new List<Identifier>(); (CurrentSemanticValue.obj as List<Identifier> ).Add(new Identifier(ValueStack[ValueStack.Depth-1].identifier)); }
+        break;
+      case 49: // CompoundName -> CompoundName, DOT, IDENTIFIER
+{(CurrentSemanticValue.obj as List<Identifier>).Add(new Identifier(ValueStack[ValueStack.Depth-1].identifier));}
         break;
     }
 #pragma warning restore 162, 1522

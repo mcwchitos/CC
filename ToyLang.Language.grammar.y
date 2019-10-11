@@ -13,6 +13,7 @@
 			public double realNumber;
 			public string identifier; 
 			public Node node;
+			public object obj;
 	   }
 
 // Identifiers & numbers
@@ -82,7 +83,7 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id=(Identifier) $2.node; Root.Classes.Add(c);}
+       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c);}
        | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody
        ;
 
@@ -183,8 +184,8 @@ LeftPart
        ;
 
 CompoundName
-       :                  IDENTIFIER {$$.node = new Identifier($1.identifier); }
-       | CompoundName DOT IDENTIFIER
+       :                  IDENTIFIER {$$.obj = new List<Identifier>(); ($$.obj as List<Identifier> ).Add(new Identifier($1.identifier)); }
+       | CompoundName DOT IDENTIFIER {($$.obj as List<Identifier>).Add(new Identifier($3.identifier));}
        ;
 
 IfStatement

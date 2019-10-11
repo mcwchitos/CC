@@ -132,7 +132,7 @@ namespace CCAss3
         }
     }
     class Parameters{
-        public List<Parameter> ParametersList;
+        public List<Parameter> ParametersList = new List<Parameter>();
         
         public Parameters(List<Parameter> parameterslist){
             ParametersList = parameterslist;
@@ -165,20 +165,18 @@ namespace CCAss3
     class ClassDeclaration : Statement
     {
         public int Scope;
-        public Identifier Id;
+        public List<Identifier> Id = new List<Identifier>();
         public Identifier Extends;
         public List<FieldDeclaration> Fields = new List<FieldDeclaration>();
         public List<MethodDeclaration> Methods = new List<MethodDeclaration>();
 
         public ClassDeclaration(int scope, Identifier id, Identifier extends){
             Scope = scope;
-            Id = id;
             Extends = extends;
         }
 
         public ClassDeclaration(int scope, Identifier id){
             Scope = scope;
-            Id = id;
             Extends = null;
         }
 
