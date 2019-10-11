@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/11/2019 2:32:39 PM
+// DateTime: 10/11/2019 3:39:18 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM>
+// Input file <ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM>
 
 // options: no-lines gplex
 
@@ -32,6 +32,7 @@ internal partial struct ValueType
 			public int intNumber;
 			public double realNumber;
 			public string identifier; 
+			public Node node;
 	   }
 // Abstract base class for GPLEX scanners
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
@@ -55,9 +56,9 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
-  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM
+  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM
        public RootNode Root = new RootNode();
-  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM
+  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 3:39:13 PM
 
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
@@ -349,7 +350,16 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {Root.Imports.Add(new Identifier(ValueStack[ValueStack.Depth-2].identifier));}
         break;
       case 8: // ClassDeclaration -> CLASS, CompoundName, Extension, SEMICOLON, ClassBody
-{ Console.WriteLine(ValueStack[ValueStack.Depth-4].identifier); }
+{ClassDeclaration c = new ClassDeclaration(); c.Id=(Identifier) ValueStack[ValueStack.Depth-4].node; Root.Classes.Add(c);}
+        break;
+      case 11: // Extension -> EXTENDS, IDENTIFIER
+{CurrentSemanticValue.node = new Identifier(ValueStack[ValueStack.Depth-1].identifier);}
+        break;
+      case 29: // Parameter -> Type, IDENTIFIER
+{}
+        break;
+      case 48: // CompoundName -> IDENTIFIER
+{CurrentSemanticValue.node = new Identifier(ValueStack[ValueStack.Depth-1].identifier); }
         break;
     }
 #pragma warning restore 162, 1522

@@ -89,7 +89,7 @@ namespace CCAss3
             OpType = opType;
             Left = left;
             Right = right;
-        }Field
+        }
     }
 
     class TermOperation : Expression
@@ -108,10 +108,10 @@ namespace CCAss3
 
     class FieldDeclaration : Statement
     {
-        int Visibility;
-        int Staticness;
-        int Type;
-        Identifier Id;
+        public int Visibility;
+        public int Staticness;
+        public int Type;
+        public Identifier Id;
 
         public FieldDeclaration(int visibility, int staticness, int type, Identifier id){
             Visibility = visibility;
@@ -122,30 +122,53 @@ namespace CCAss3
 
     }
 
+    class Parameter{
+        public int Type;
+        public Identifier Id;
+
+        public Parameter(int type, Identifier id){
+            Type = type;
+            Id = id;
+        }
+    }
+    class Parameters{
+        public List<Parameter> ParametersList;
+        
+        public Parameters(List<Parameter> parameterslist){
+            ParametersList = parameterslist;
+        }
+
+        public Parameters()
+        {
+            ParametersList = new List<Parameter>();
+        }
+    }
     class MethodDeclaration : Statement
     {
-         int Visibility;
-        int Staticness;
-        int Type;
-        int MethodType;
-        Identifier Id;
+        public int Visibility;
+        public int Staticness;
+        public int Type;
+        public int MethodType;
+        public Identifier Id;
+        public Parameters Params = new Parameters();
 
-        public MethodDeclaration(int visibility, int staticness, int type, int methodtype, Identifier id){
+        public MethodDeclaration(int visibility, int staticness, int type, int methodtype, Identifier id, Parameters parameters){
             Visibility = visibility;
             Staticness = staticness;
             Type = type;
             MethodType = methodtype;
             Id = id;
+            Params = parameters;
         }
     }
 
     class ClassDeclaration : Statement
     {
-        int Scope;
-        Identifier Id;
-        Identifier Extends;
-        List<FieldDeclaration> Fields = new List<FieldDeclaration>();
-        List<MethodDeclaration> Methods = new List<MethodDeclaration>();
+        public int Scope;
+        public Identifier Id;
+        public Identifier Extends;
+        public List<FieldDeclaration> Fields = new List<FieldDeclaration>();
+        public List<MethodDeclaration> Methods = new List<MethodDeclaration>();
 
         public ClassDeclaration(int scope, Identifier id, Identifier extends){
             Scope = scope;
@@ -158,7 +181,11 @@ namespace CCAss3
             Id = id;
             Extends = null;
         }
-        
+
+        public ClassDeclaration(){
+            Scope = 0;
+            Extends = null;
+        }
     }
 
     class RootNode : Node
