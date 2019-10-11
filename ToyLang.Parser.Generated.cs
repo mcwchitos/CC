@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/10/2019 11:44:00 PM
+// DateTime: 10/11/2019 2:32:39 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/10/2019 11:33:17 PM>
+// Input file <ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM>
 
 // options: no-lines gplex
 
@@ -55,6 +55,10 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
+  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM
+       public RootNode Root = new RootNode();
+  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 2:32:38 PM
+
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
 #pragma warning restore 649
@@ -341,8 +345,11 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 #pragma warning disable 162, 1522
     switch (action)
     {
+      case 5: // Import -> IMPORT, IDENTIFIER, SEMICOLON
+{Root.Imports.Add(new Identifier(ValueStack[ValueStack.Depth-2].identifier));}
+        break;
       case 8: // ClassDeclaration -> CLASS, CompoundName, Extension, SEMICOLON, ClassBody
-{Console.WriteLine(ValueStack[ValueStack.Depth-5].identifier); Console.WriteLine(ValueStack[ValueStack.Depth-4].identifier); }
+{ Console.WriteLine(ValueStack[ValueStack.Depth-4].identifier); }
         break;
     }
 #pragma warning restore 162, 1522

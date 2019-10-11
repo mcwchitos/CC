@@ -1,10 +1,10 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 10/10/2019 10:24:55 PM>
+//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 10/11/2019 2:31:38 PM>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  HUY001
-//  DateTime: 10/10/2019 10:41:29 PM
+//  DateTime: 10/11/2019 2:31:41 PM
 //  UserName: huy
 // ==========================================================================
 
@@ -15,172 +15,69 @@
 %visibility internal
 %tokentype Token
 
+%{
+       public RootNode Root;
+%}
+
 %union { 
-			public int n; 
-			public string s; 
+			public int intNumber;
+			public double realNumber;
+			public string identifier; 
 	   }
 
 // Identifiers & numbers
-%token IDENTIFIER;
-//--------------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token NUMBER;
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
+%token IDENTIFIER
+%token NUMBER
 
 // Keywords
-%token IMPORT;
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token CLASS;
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token EXTENDS;
-//-----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token PRIVATE;
-//-----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token PUBLIC;
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token STATIC;
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token VOID;
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token IF;
-//------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token ELSE;
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token WHILE;
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token LOOP;
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token RETURN;
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token PRINT;
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token NULL;
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token NEW;
-//-------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token INT;
-//-------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token REAL;
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
+%token IMPORT
+%token CLASS
+%token EXTENDS
+%token PRIVATE
+%token PUBLIC
+%token STATIC
+%token VOID
+%token IF
+%token ELSE
+%token WHILE
+%token LOOP
+%token RETURN
+%token PRINT
+%token NULL
+%token NEW
+%token INT
+%token REAL
 // Delimiters
 
-%token LBRACE;     //  {
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token RBRACE;    //  }
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token LPAREN;     //  (
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token RPAREN;      //  )
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token LBRACKET;    //  [
-//------------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token RBRACKET;    //  ]
-//------------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token COMMA;       //  ,
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token DOT;         //  .
-//-------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token SEMICOLON;   //  ;
-//-------------^^
-// Error: Bad separator character in list
-// --------------------------------------
+%token LBRACE     //  {
+%token RBRACE   //  }
+%token LPAREN     //  (
+%token RPAREN      //  )
+%token LBRACKET    //  [
+%token RBRACKET    //  ]
+%token COMMA       //  ,
+%token DOT         //  .
+%token SEMICOLON   //  ;
 
 // Operator signs
-%token ASSIGN;      //  =
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token LESS;        //  <
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token GREATER;     //  >
-//-----------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token EQUAL;       //  ==
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token NOT_EQUAL;   //  !=
-//-------------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token PLUS;        //  +
-//--------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token MINUS;       //  -
-//---------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token MULTIPLY;    //  *
-//------------^^
-// Error: Bad separator character in list
-// --------------------------------------
-%token DIVIDE;      //  /
-//----------^^
-// Error: Bad separator character in list
-// --------------------------------------
+%token ASSIGN    //  =
+%token LESS       //  <
+%token GREATER     //  >
+%token EQUAL       //  ==
+%token NOT_EQUAL   //  !=
+%token PLUS        //  +
+%token MINUS       //  -
+%token MULTIPLY    //  *
+%token DIVIDE      //  /
 
 %start CompilationUnit
 
 %%
-CompilationUnit
-       : Imports ClassDeclarations
+CompilationUnit   {Root = new RootNode();}
+//---------------^^
+// Error: Syntax error, unexpected '{', expecting ':'
+// --------------------------------------------------
+       : Imports ClassDeclarations    
        ;
 
 Imports
@@ -189,7 +86,7 @@ Imports
        ;
 
 Import
-       : IMPORT IDENTIFIER SEMICOLON
+       : IMPORT IDENTIFIER SEMICOLON {Root.Imports.Add(new Identifier($2.identifier));}
        ;
 
 ClassDeclarations
@@ -198,7 +95,7 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody
+       : CLASS CompoundName Extension SEMICOLON ClassBody { Console.WriteLine($2.identifier); }
        | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody
        ;
 

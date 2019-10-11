@@ -11,7 +11,8 @@ namespace CCAss3
         static void Main(string[] args)
         {
             ToyLangParser parser = new ToyLangParser();
-            parser.Parse("CLASS kek;{}");
+            parser.Parse("IMPORT huy; CLASS kek;{}");
+            RootNode node = parser.Root;
             Console.ReadLine();
         }
     }

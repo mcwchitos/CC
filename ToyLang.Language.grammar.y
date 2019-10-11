@@ -4,6 +4,10 @@
 %visibility internal
 %tokentype Token
 
+%{
+       public RootNode Root = new RootNode();
+%}
+
 %union { 
 			public int intNumber;
 			public double realNumber;
@@ -58,8 +62,8 @@
 %start CompilationUnit
 
 %%
-CompilationUnit
-       : Imports ClassDeclarations
+CompilationUnit   
+       : Imports ClassDeclarations    
        ;
 
 Imports
@@ -68,7 +72,7 @@ Imports
        ;
 
 Import
-       : IMPORT IDENTIFIER SEMICOLON
+       : IMPORT IDENTIFIER SEMICOLON {Root.Imports.Add(new Identifier($2.identifier));}
        ;
 
 ClassDeclarations
@@ -77,13 +81,13 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody {Console.WriteLine($1.identifier); Console.WriteLine($2.identifier); }
+       : CLASS CompoundName Extension SEMICOLON ClassBody { }
        | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody
        ;
 
 Extension
        : /* empty */
-       | EXTENDS IDENTIFIER
+       | EXTENDS IDENTIFIER {$$ = $2}
        ;
 
 ClassBody
