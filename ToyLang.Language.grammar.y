@@ -83,8 +83,8 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c);}
-       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody
+       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 0; c.Body = $5.obj as ClassBody}
+       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 1;, c.Body = $6.obj as ClassBody}
        ;
 
 Extension
@@ -93,57 +93,61 @@ Extension
        ;
 
 ClassBody
-       : LBRACE              RBRACE
-       | LBRACE ClassMembers RBRACE
+       : LBRACE              RBRACE {$$.obj = new ClassBody();}
+       | LBRACE ClassMembers RBRACE {$$.obj = $2.obj;}
        ;
 
 ClassMembers
-       :              ClassMember
-       | ClassMembers ClassMember
+       :              ClassMember {ClassBody b = new ClassBody(); $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration)}else{b.Methods.Add($1.obj as MethodDeclaration)}}
+       | ClassMembers ClassMember {ClassBody b = $$.obj as ClassBody; $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration)}else{b.Methods.Add($1.obj as MethodDeclaration)}}
        ;
 
 ClassMember
-       : FieldDeclaration
-       | MethodDeclaration
+       : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj}
+       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj}
        ;
 
 FieldDeclaration
-       : Visibility Staticness Type IDENTIFIER SEMICOLON
+       : Visibility Staticness Type IDENTIFIER SEMICOLON 
+       {FieldDeclaration f = new FieldDeclaration(); f.Visibility = $1.intNumber; f.Staticness = $2.intNumber;
+       f.Type = $3.obj; f.Id = new Identifier($4.identifier); $$.obj = f;}
        ;
 
 Visibility
-       : /* empty */
-       | PRIVATE
-       | PUBLIC
+       : /* empty */ {$$.intNumber = 0;}
+       | PRIVATE {$$.intNumber = 0;}
+       | PUBLIC {$$.intNumber = 1;}
        ;
 
 Staticness
-       : /* empty */
-       | STATIC
+       : /* empty */ {$$.intNumber = 0;}
+       | STATIC {$$.intNumber = 1;}
        ;
 
 MethodDeclaration
        : Visibility Staticness MethodType IDENTIFIER Parameters
-            Body
+            Body  
+            {MethodDeclaration m = new MethodDeclaration(); m.Visibility = $1.intNumber; m.Staticness = $2.intNumber; m.MethodType=$3.obj; 
+            m.Id = new Identifier($4.identifier); m.Params = $5.obj as List<Parameter>; $$.obj = m;}
        ;
 
 Parameters
-       : LPAREN               RPAREN
-       | LPAREN ParameterList RPAREN
+       : LPAREN               RPAREN {$$.obj = new List<Parameter>();}
+       | LPAREN ParameterList RPAREN {$$.obj = $2.obj;}
        ;
 
 ParameterList
-       :                     Parameter 
-       | ParameterList COMMA Parameter
+       :                     Parameter {$$.obj = new List<Parameter>(); ($$.obj as List<Parameter> ).Add($1.obj as Parameter); }
+       | ParameterList COMMA Parameter {($$.obj as List<Parameter>).Add($1.obj as Parameter);}
        ;
 
 Parameter
-       : Type IDENTIFIER {}
+       : Type IDENTIFIER {$$.obj = new Parameter($1.obj, new Identifier($2.identifier);) }
        ;
 
 MethodType
-       : Type
-       | VOID
+       : Type {$$.obj = $1;}
+       | VOID {$$.obj = new CType();}
        ;
 
 Body
@@ -156,7 +160,7 @@ LocalDeclarations
        ;
 
 LocalDeclaration
-       : Type IDENTIFIER SEMICOLON
+       : Type IDENTIFIER SEMICOLON { LocalDeclaration ld = new LocalDeclaration(); ld.Type = $1.obj; ld.Id = new Identifier($2.identifier);}
        ;
 
 Statements
@@ -277,14 +281,14 @@ NewType
        ;
 
 Type
-       : INT        ArrayTail
-       | REAL       ArrayTail
-       | IDENTIFIER ArrayTail
+       : INT        ArrayTail {$$.obj = new IntType($2.intNumber == 1);}
+       | REAL       ArrayTail {$$.obj = new RealType($2.intNumber == 1);}
+       | IDENTIFIER ArrayTail {$$.obj = new CustomType(new Identifier($1.identifier), $2.intNumber == 1);}
        ;
 
 ArrayTail
-       : /* empty */
-       | LBRACKET RBRACKET
+       : /* empty */       {$$.intNumber = 0}
+       | LBRACKET RBRACKET {$$.intNumber = 1}
        ;
 
 %%

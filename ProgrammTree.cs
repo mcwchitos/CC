@@ -6,6 +6,38 @@ using System.Threading.Tasks;
 
 namespace CCAss3
 {
+    class CType
+    {
+        public bool isArray;
+    }
+
+    class IntType : CType
+    {
+        public IntType(bool arr)
+        {
+            isArray = arr;
+        }
+    }
+
+    class RealType : CType
+    {
+        public RealType(bool arr)
+        {
+            isArray = arr;
+        }
+    }
+
+    class CustomType : CType
+    {
+        public Identifier Id;
+
+        public CustomType(Identifier id, bool arr)
+        {
+            Id = id;
+            isArray = arr;
+        }
+    }
+
     class Node
     {
 
@@ -131,31 +163,30 @@ namespace CCAss3
             Id = id;
         }
     }
-    class Parameters{
-        public List<Parameter> ParametersList = new List<Parameter>();
-        
-        public Parameters(List<Parameter> parameterslist){
-            ParametersList = parameterslist;
-        }
 
-        public Parameters()
-        {
-            ParametersList = new List<Parameter>();
+    class LocalDeclaration{
+        public int Type;
+        public Identifier Id;
+
+        public LocalDeclaration(int type, Identifier id){
+            Type = type;
+            Id = id;
         }
     }
+
+  
     class MethodDeclaration : Statement
     {
         public int Visibility;
         public int Staticness;
-        public int Type;
         public int MethodType;
         public Identifier Id;
-        public Parameters Params = new Parameters();
+        public List<Parameter> Params = new List<Parameter>();
+        public List<LocalDeclaration> LocalFields = new List<LocalDeclaration>();
 
-        public MethodDeclaration(int visibility, int staticness, int type, int methodtype, Identifier id, Parameters parameters){
+        public MethodDeclaration(int visibility, int staticness, CType type, int methodtype, Identifier id, List<Parameter> parameters){
             Visibility = visibility;
             Staticness = staticness;
-            Type = type;
             MethodType = methodtype;
             Id = id;
             Params = parameters;
@@ -167,8 +198,7 @@ namespace CCAss3
         public int Scope;
         public List<Identifier> Id = new List<Identifier>();
         public Identifier Extends;
-        public List<FieldDeclaration> Fields = new List<FieldDeclaration>();
-        public List<MethodDeclaration> Methods = new List<MethodDeclaration>();
+        public ClassBody Body;
 
         public ClassDeclaration(int scope, Identifier id, Identifier extends){
             Scope = scope;
@@ -185,6 +215,25 @@ namespace CCAss3
             Extends = null;
         }
     }
+
+    class ClassBody
+    {
+        public List<FieldDeclaration> Fields = new List<FieldDeclaration>();
+        public List<MethodDeclaration> Methods = new List<MethodDeclaration>();
+
+        public ClassBody(object fields, object methods)
+        {
+            Fields = (List<FieldDeclaration>) fields;
+            Methods = (List<MethodDeclaration>) methods;
+        }
+
+        public ClassBody()
+        {
+
+        }
+
+    }
+
 
     class RootNode : Node
     {
