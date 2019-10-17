@@ -1,5 +1,5 @@
-﻿IMPORT huy;
-IMPORT zalupa; 
+﻿IMPORT SomeStuff;
+IMPORT AnotherStuff; 
 
 CLASS chlen;{
 
@@ -7,6 +7,10 @@ CLASS chlen;{
 	PRIVATE STATIC VOID main(INT a, INT b)
 		{
 			REAL c;
-			{c = 21 + 88 * 33;}
+			IKeker keker;
+			keker = NEW Rofler;
+			c = 3;
+			c = c + 3;
+			keker.kek(c);
 		}
 }

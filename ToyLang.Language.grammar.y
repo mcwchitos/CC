@@ -166,8 +166,8 @@ LocalDeclaration
        ;
 
 Statements
-       :            Statement {$$.obj = new List<Statement>(); ($$.obj as List<Statement> ).Add($1.obj as Statement); }
-       | Statements Statement {($$.obj as List<Statement> ).Add($1.obj as Statement); }
+       :            Statement {$$.obj = new List<Statement>(); ($$.obj as List<Statement> ).Add($1.obj as Statement);}
+       | Statements Statement {($$.obj as List<Statement> ).Add($2.obj as Statement); }
        ;
 
 Statement
@@ -214,7 +214,7 @@ CallStatement
        ;
 
 ArgumentList
-       :                    Expression {List<Expression> e = new List<Expression>(); e.Add($1.obj as Expression);}
+       :                    Expression {List<Expression> e = new List<Expression>(); e.Add($1.obj as Expression); $$.obj = e;}
        | ArgumentList COMMA Expression {List<Expression> e = $$.obj as List<Expression>; e.Add($3.obj as Expression);}
        ;
 

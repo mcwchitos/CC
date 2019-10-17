@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/11/2019 9:16:54 PM
+// DateTime: 10/17/2019 7:12:13 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM>
+// Input file <ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM>
 
 // options: no-lines gplex
 
@@ -58,9 +58,9 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
-  // Verbatim content from ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM
+  // Verbatim content from ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM
        public RootNode Root = new RootNode();
-  // End verbatim content from ToyLang.Language.grammar.y - 10/11/2019 9:04:57 PM
+  // End verbatim content from ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM
 
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
@@ -442,10 +442,10 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 { LocalDeclaration ld = new LocalDeclaration(); ld.Type = ValueStack[ValueStack.Depth-3].obj as CType; ld.Id = new Identifier(ValueStack[ValueStack.Depth-2].identifier); CurrentSemanticValue.obj=ld;}
         break;
       case 37: // Statements -> Statement
-{CurrentSemanticValue.obj = new List<Statement>(); (CurrentSemanticValue.obj as List<Statement> ).Add(ValueStack[ValueStack.Depth-1].obj as Statement); }
+{CurrentSemanticValue.obj = new List<Statement>(); (CurrentSemanticValue.obj as List<Statement> ).Add(ValueStack[ValueStack.Depth-1].obj as Statement);}
         break;
       case 38: // Statements -> Statements, Statement
-{(CurrentSemanticValue.obj as List<Statement> ).Add(ValueStack[ValueStack.Depth-2].obj as Statement); }
+{(CurrentSemanticValue.obj as List<Statement> ).Add(ValueStack[ValueStack.Depth-1].obj as Statement); }
         break;
       case 39: // Statement -> Assignment
 {CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
@@ -505,7 +505,7 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {CurrentSemanticValue.obj = new CallStatement(ValueStack[ValueStack.Depth-5].obj as List<Identifier>, ValueStack[ValueStack.Depth-3].obj as List<Expression>);}
         break;
       case 58: // ArgumentList -> Expression
-{List<Expression> e = new List<Expression>(); e.Add(ValueStack[ValueStack.Depth-1].obj as Expression);}
+{List<Expression> e = new List<Expression>(); e.Add(ValueStack[ValueStack.Depth-1].obj as Expression); CurrentSemanticValue.obj = e;}
         break;
       case 59: // ArgumentList -> ArgumentList, COMMA, Expression
 {List<Expression> e = CurrentSemanticValue.obj as List<Expression>; e.Add(ValueStack[ValueStack.Depth-1].obj as Expression);}
