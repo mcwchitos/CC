@@ -105,7 +105,7 @@ ClassMembers
 
 ClassMember
        : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj;}
-       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj; Console.WriteLine("qq");}
+       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj;}
        ;
 
 FieldDeclaration
@@ -147,7 +147,7 @@ Parameter
        ;
 
 MethodType
-       : Type {$$.obj = $1;}
+       : Type {$$.obj = $1.obj;}
        | VOID {$$.obj = new CType();}
        ;
 

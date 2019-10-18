@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  HUY001
-// DateTime: 10/17/2019 7:12:13 PM
+// DateTime: 10/18/2019 12:59:25 PM
 // UserName: huy
-// Input file <ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM>
+// Input file <ToyLang.Language.grammar.y - 10/18/2019 12:58:57 PM>
 
 // options: no-lines gplex
 
@@ -58,9 +58,9 @@ internal class ScanObj {
 [GeneratedCodeAttribute( "Gardens Point Parser Generator", "1.5.2")]
 internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {
-  // Verbatim content from ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM
+  // Verbatim content from ToyLang.Language.grammar.y - 10/18/2019 12:58:57 PM
        public RootNode Root = new RootNode();
-  // End verbatim content from ToyLang.Language.grammar.y - 10/17/2019 7:12:09 PM
+  // End verbatim content from ToyLang.Language.grammar.y - 10/18/2019 12:58:57 PM
 
 #pragma warning disable 649
   private static Dictionary<int, string> aliases;
@@ -379,7 +379,7 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {CurrentSemanticValue.intNumber = 0; CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
         break;
       case 17: // ClassMember -> MethodDeclaration
-{CurrentSemanticValue.intNumber = 1; CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj; Console.WriteLine("qq");}
+{CurrentSemanticValue.intNumber = 1; CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
         break;
       case 18: // FieldDeclaration -> Visibility, Staticness, Type, IDENTIFIER, SEMICOLON
 {FieldDeclaration f = new FieldDeclaration(); f.Visibility = ValueStack[ValueStack.Depth-5].intNumber; f.Staticness = ValueStack[ValueStack.Depth-4].intNumber;
@@ -421,7 +421,7 @@ internal partial class ToyLangParser: ShiftReduceParser<ValueType, LexLocation>
 {CurrentSemanticValue.obj = new Parameter(ValueStack[ValueStack.Depth-2].obj as CType, new Identifier(ValueStack[ValueStack.Depth-1].identifier)); }
         break;
       case 30: // MethodType -> Type
-{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1];}
+{CurrentSemanticValue.obj = ValueStack[ValueStack.Depth-1].obj;}
         break;
       case 31: // MethodType -> VOID
 {CurrentSemanticValue.obj = new CType();}
