@@ -6,9 +6,226 @@ using System.Threading.Tasks;
 
 namespace CCAss3
 {
-    class CType
+    class RootNode : Node
     {
-        public bool isArray;
+        public List<ClassDeclaration> Classes;
+
+        public RootNode()
+        {
+            Classes = new List<ClassDeclaration>();
+        }
+    }
+
+    class ClassDeclaration : Statement
+    {
+        public ClassName ClassName;
+        public Identifier Extends;
+        public List<MemberDeclaration> Members = new List<MemberDeclaration>();
+
+        public ClassDeclaration(ClassName className, Identifier extends)
+        {
+            ClassName = className;
+            Extends = extends;
+        }
+
+        public ClassDeclaration(ClassName className)
+        {
+            ClassName = className;
+        }
+
+        public ClassDeclaration()
+        {
+        }
+    }
+
+    class ClassName
+    {
+        public Identifier Id;
+        public ClassName SecondPart;
+
+        public ClassName(Identifier id)
+        {
+            Id = id;
+        }
+
+        public ClassName(Identifier id, ClassName secondPart)
+        {
+            Id = id;
+            SecondPart = secondPart;
+        }
+    }
+
+
+    class MemberDeclaration : Node
+    {
+        public MemberDeclaration()
+        {
+        }
+    }
+
+    class VariableDeclaration : MemberDeclaration
+    {
+        public Identifier Id;
+        public Expression Expr;
+
+        public VariableDeclaration(Identifier id, Expression expr)
+        {
+            Expr = expr;
+            Id = id;
+        }
+
+        public VariableDeclaration()
+        {
+        }
+    }
+
+    class MethodDeclaration : MemberDeclaration
+    {
+        public Identifier ReturnType;
+        public Identifier Id;
+        public List<Parameter> Params = new List<Parameter>();
+        public Body Body;
+
+        public MethodDeclaration(Identifier id,
+            List<Parameter> parameters, Identifier returntype, Body body)
+        {
+            ReturnType = returntype;
+            Id = id;
+            Params = parameters;
+            Body = body;
+        }
+
+        public MethodDeclaration(Identifier id,
+            Identifier returntype, Body body)
+        {
+            ReturnType = returntype;
+            Id = id;
+            Body = body;
+        }
+
+        public MethodDeclaration(Identifier id,
+            List<Parameter> parameters, Body body)
+        {
+            Id = id;
+            Params = parameters;
+            Body = body;
+        }
+
+        public MethodDeclaration()
+        {
+        }
+    }
+
+    class Parameter
+    {
+        public Identifier Id;
+        public ClassName ClassName;
+
+        public Parameter(Identifier id, ClassName className)
+        {
+            ClassName = className;
+            Id = id;
+        }
+    }
+
+
+    class Body
+    {
+        public List<VariableDeclaration> Variables = new List<VariableDeclaration>();
+        public List<Statement> Statements = new List<Statement>();
+
+        public Body()
+        {
+        }
+    }
+
+    class ConstructorDeclaration : MemberDeclaration
+    {
+        public List<Parameter> Parameters = new List<Parameter>();
+        public Body Body;
+
+        public ConstructorDeclaration(List<Parameter> parameters, Body body)
+        {
+            Parameters = parameters;
+            Body = body;
+        }
+
+        public ConstructorDeclaration(Body body)
+        {
+            Body = body;
+        }
+
+        public ConstructorDeclaration()
+        {
+        }
+    }
+
+    class Statement : Node
+    {
+        public Statement()
+        {
+        }
+    }
+
+    class Assignment : Statement
+    {
+        public Identifier LeftPart;
+        public Expression RightPart;
+
+        public Assignment(Identifier leftPart, Expression rightPart)
+        {
+            LeftPart = leftPart;
+            RightPart = rightPart;
+        }
+    }
+
+
+    class WhileLoop : Statement
+    {
+        public Expression Condition;
+        public Body Body;
+
+        public WhileLoop(Expression condition, Body body)
+        {
+            Condition = condition;
+            Body = body;
+        }
+    }
+
+
+    class IfStatement : Statement
+    {
+        public Expression Condition;
+        public Body TrueStatement;
+        public Body FalseStatement;
+
+        public IfStatement(Expression condition, Body trueStatement)
+        {
+            Condition = condition;
+            TrueStatement = trueStatement;
+        }
+
+        public IfStatement(Expression condition, Body trueStatement, Body falseStatement)
+        {
+            Condition = condition;
+            TrueStatement = trueStatement;
+            FalseStatement = falseStatement;
+        }
+    }
+
+
+    class ReturnStatement : Statement
+    {
+        public Expression expression;
+
+        public ReturnStatement(Expression exp)
+        {
+            expression = exp;
+        }
+
+        public ReturnStatement()
+        {
+        }
     }
 
 
@@ -22,429 +239,33 @@ namespace CCAss3
         }
     }
 
-    class IntType : CType
-    {
-        public IntType(bool arr)
-        {
-            isArray = arr;
-        }
-
-    }
-
-    class RealType : CType
-    {
-        public RealType(bool arr)
-        {
-            isArray = arr;
-        }
-    }
-
-    class CustomType : CType
-    {
-        public Identifier Id;
-
-        public CustomType(Identifier id, bool arr)
-        {
-            Id = id;
-            isArray = arr;
-        }
-    }
 
     class Node
     {
-
     }
 
-    class Expression : Node
+    class Expression
     {
+       
 
-    }
-
-    class IntExpression : Expression
-    {
-        public int Value;
-
-        public IntExpression(int value)
-        {
-            Value = value;
-        }
-    }
-
-    class RealExpression : Expression
-    {
-        public bool Value;
-
-        public RealExpression(bool value)
-        {
-            Value = value;
-        }
-    }
-
-    class IdentExpression : Expression
-    {
-        public List<Identifier> Id;
-
-        public IdentExpression()
+        public Expression()
         {
         }
     }
 
-    /// <summary>
-    /// |>| is 0
-    /// |<| is 1
-    /// |!=| is 2
-    /// |==| is 3
-    /// </summary>
-    class BinaryRelation : Expression
+    class Primary : Node
     {
-        public Expression Left;
-        public Expression Right;
-        public int OP;
-
-        public BinaryRelation(Expression left, Expression right, int op)
-        {
-            Left = left;
-            Right = right;
-            OP = op;
-        }
     }
 
-    /// <summary>
-    /// 0 is pluss
-    /// 1 is minus
-    /// 2 is multiplication
-    /// 3 is division
-    /// </summary>
-    class BinaryOperation : Expression
+    class IntegerLiteral : Primary
     {
-        public int OpType;
-        public Expression Left;
-        public Expression Right;
-
-        public BinaryOperation(Expression left, Expression right, int opType)
-        {
-            OpType = opType;
-            Left = left;
-            Right = right;
-        }
     }
 
-    class LeftPart : Expression
+    class RealLiteral : Primary
     {
-        public List<Identifier> CompoundName;
-        public Expression Expression;
-
-        public LeftPart(List<Identifier> name, Expression expression)
-        {
-            CompoundName = name;
-            Expression = expression;
-        }
-
-        public LeftPart(List<Identifier> name)
-        {
-            CompoundName = name;
-        }
     }
 
-    class CreateExpression : Expression
+    class BooleanLiteral : Primary
     {
-        public CType NType;
-        public Expression Body;
-
-        public CreateExpression(CType nType)
-        {
-            NType = nType;
-        }
-        public CreateExpression(CType nType, Expression body)
-        {
-            NType = nType;
-            Body = body;
-        }
-    }
-
-
-    class Statement : Node
-    {
-        public Statement(){}
-    }
-
-    class Assignment : Statement{
-        public Expression LeftPart;
-        public Expression RightPart;
-
-        public Assignment(Expression leftPart, Expression rightPart)
-        {
-            LeftPart = leftPart;
-            RightPart = rightPart;
-        }
-    }
-
-
-    class IfStatement : Statement{
-        public Expression Condition;
-        public Statement TrueStatement;
-        public Statement FalseStatement;
-
-        public IfStatement(Expression condition, Statement trueStatement){
-            Condition = condition;
-            TrueStatement = trueStatement;
-        }
-        public IfStatement(Expression condition, Statement trueStatement, Statement falseStatement)
-        {
-            Condition = condition;
-            TrueStatement = trueStatement;
-            FalseStatement = falseStatement;
-        }
-
-    }
-
-    class WhileStatement : Statement{
-        public Expression Condition;
-        public Statement Statements;
-
-        public WhileStatement(Expression condition, Statement statements){
-            Condition = condition;
-            Statements = statements;
-        }
-    }
-
-    class ReturnStatement : Statement{
-        public Expression expression;
-
-        public ReturnStatement(Expression exp){
-            expression = exp;
-        }
-
-        public ReturnStatement()
-        {
-
-        }
-    }
-
-    class CallStatement : Statement{
-        public List<Identifier> Id = new List<Identifier>();
-        public List<Expression> Args = new List<Expression>();
-
-        public CallStatement(List<Identifier> id){
-            Id = id;
-        }
-
-        public CallStatement(List<Identifier> id, List<Expression> args){
-            Id = id;
-            Args = args;
-        }
-    }
-
-    class PrintStatement : Statement{
-        public Expression expression;
-
-        public PrintStatement(Expression exp){
-            expression = exp;
-        }
-    }
-
-    class Block : Statement{
-        public List<Statement> expression = new List<Statement>();
-
-        public Block(List<Statement> exp){
-            expression = exp;
-        }
-
-        public Block(){
-        }
-    }
-    
-
-    class IntNode : Expression  
-    {
-        public int Value;
-
-        public IntNode(int value)
-        {
-            Value = value;
-        }
-    }
-    
-    class RealNode : Expression
-    {
-        public double Value;
-
-        public RealNode(double value)
-        {
-            Value = value;
-        }
-    }
-
-
-    class RelateOperation : Expression
-    {
-        public int OpType;
-        public Expression Left;
-        public Expression Right;
-
-        public RelateOperation(int opType, Expression left, Expression right )
-        {
-            OpType = opType;
-            Left = left;
-            Right = right;
-        }
-    }
-
-    class FactorOperation : Expression
-    {
-        public int OpType;
-        public Expression Left;
-        public Expression Right;
-
-        public FactorOperation(int opType, Expression left, Expression right )
-        {
-            OpType = opType;
-            Left = left;
-            Right = right;
-        }
-    }
-
-    class TermOperation : Expression
-    {
-        public int OpType;
-        public Expression Left;
-        public Expression Right;
-
-        public TermOperation(int opType, Expression left, Expression right )
-        {
-            OpType = opType;
-            Left = left;
-            Right = right;
-        }
-
-    }
-
-    class FieldDeclaration : Statement
-    {
-        public int Visibility;
-        public int Staticness;
-        public CType Type;
-        public Identifier Id;
-
-        public FieldDeclaration(int visibility, int staticness, CType type, Identifier id){
-            Visibility = visibility;
-            Staticness = staticness;
-            Type = type;
-            Id = id;
-        }
-
-        public FieldDeclaration() { }
-
-    }
-
-    class Parameter{
-        public CType Type;
-        public Identifier Id;
-
-        public Parameter(CType type, Identifier id){
-            Type = type;
-            Id = id;
-        }
-    }
-
-    class LocalDeclaration{
-        public CType Type;
-        public Identifier Id;
-
-        public LocalDeclaration(CType type, Identifier id){
-            Type = type;
-            Id = id;
-        }
-
-        public LocalDeclaration(){}
-    }
-
-  
-    class MethodDeclaration : Statement
-    {
-        public int Visibility;
-        public int Staticness;
-        public CType MethodType;
-        public Identifier Id;
-        public List<Parameter> Params = new List<Parameter>();
-        public MethodBody Body;
-
-        public MethodDeclaration(int visibility, int staticness, CType methodtype, Identifier id, List<Parameter> parameters, MethodBody body){
-            Visibility = visibility;
-            Staticness = staticness;
-            MethodType = methodtype;
-            Id = id;
-            Params = parameters;
-            Body = body;
-        }
-
-        public MethodDeclaration() { }
-    }
-
-    class MethodBody
-    {
-        public List<LocalDeclaration> LocalDeclarations = new List<LocalDeclaration>();
-        public List<Statement> Statements = new List<Statement>();
-
-        public MethodBody(List<LocalDeclaration> localdeclarations, List<Statement> statements){
-            LocalDeclarations = localdeclarations;
-            Statements = statements;
-        }
-
-        public MethodBody(){}
-    }
-
-    class ClassDeclaration : Statement
-    {
-        public int Scope;
-        public List<Identifier> Id = new List<Identifier>();
-        public Identifier Extends;
-        public ClassBody Body;
-
-        public ClassDeclaration(int scope, Identifier id, Identifier extends){
-            Scope = scope;
-            Extends = extends;
-        }
-
-        public ClassDeclaration(int scope, Identifier id){
-            Scope = scope;
-            Extends = null;
-        }
-
-        public ClassDeclaration(){
-            Scope = 0;
-            Extends = null;
-        }
-    }
-
-    class ClassBody
-    {
-        public List<FieldDeclaration> Fields = new List<FieldDeclaration>();
-        public List<MethodDeclaration> Methods = new List<MethodDeclaration>();
-
-        public ClassBody(object fields, object methods)
-        {
-            Fields = (List<FieldDeclaration>) fields;
-            Methods = (List<MethodDeclaration>) methods;
-        }
-
-        public ClassBody()
-        {
-
-        }
-
-    }
-
-
-    class RootNode : Node
-    {
-        public List<Identifier> Imports;
-        public List<ClassDeclaration> Classes;
-
-        public RootNode()
-        {
-            Imports = new List<Identifier>();
-            Classes = new List<ClassDeclaration>();
-        }
     }
 }

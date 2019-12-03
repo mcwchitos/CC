@@ -21,24 +21,27 @@
 %token IDENTIFIER
 %token NUMBER
 
-// Keywords
-%token IMPORT
+// New Keywords
 %token CLASS
 %token EXTENDS
-%token PRIVATE
-%token PUBLIC
-%token STATIC
-%token VOID
 %token IF
 %token ELSE
+%token IS
+%token END
+%token THIS
+%token THEN
 %token WHILE
 %token LOOP
+%token TRUE
+%token FALSE
 %token RETURN
-%token PRINT
-%token NULL
-%token NEW
-%token INT
-%token REAL
+%token METHOD
+%token VAR
+
+
+
+// Keywords
+
 // Delimiters
 
 %token LBRACE     //  {
@@ -49,34 +52,20 @@
 %token RBRACKET    //  ]
 %token COMMA       //  ,
 %token DOT         //  .
-%token SEMICOLON   //  ;
+%token COLON   //  :
 
 // Operator signs
-%token ASSIGN    //  =
-%token LESS       //  <
-%token GREATER     //  >
-%token EQUAL       //  ==
-%token NOT_EQUAL   //  !=
-%token PLUS        //  +
-%token MINUS       //  -
-%token MULTIPLY    //  *
-%token DIVIDE      //  /
+%token ASSIGN    //  :=
 
-%start CompilationUnit
+
+%start Program
 
 %%
-CompilationUnit   
-       : Imports ClassDeclarations    
+Program   
+       : ClassDeclarations    
        ;
 
-Imports
-       :  /* empty */
-       | Import Imports
-       ;
 
-Import
-       : IMPORT IDENTIFIER SEMICOLON {Root.Imports.Add(new Identifier($2.identifier));}
-       ;
 
 ClassDeclarations
        : /* empty */
@@ -84,56 +73,54 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 0; c.Body = $5.obj as ClassBody;}
-       | PUBLIC CLASS CompoundName Extension SEMICOLON ClassBody {ClassDeclaration c = new ClassDeclaration(); c.Id= $2.obj as List<Identifier>; c.Extends = (Identifier) $3.node; Root.Classes.Add(c); c.Scope = 1; c.Body = $6.obj as ClassBody;}
+       : CLASS ClassName Extension IS MemberDeclarations END {ClassDeclaration c = new ClassDeclaration(); c.ClassName = $2.obj as ClassName; c.Extends = $3.obj as Identifier; c.Members = $5.obj as List<MemberDeclaration>;  Root.Classes.Add(c);}
        ;
-
+       
+ClassName
+	: IDENTIFIER {$$.obj = new ClassName(new Identifier($1.identifier));}
+	| IDENTIFIER LBRACKET ClassName RBRACKET {$$.obj = new ClassName(new Identifier($1.identifier), $3.obj as ClassName);}
+	;
+	
 Extension
        : /* empty */
-       | EXTENDS IDENTIFIER {$$.node = new Identifier($2.identifier);}
+       | EXTENDS IDENTIFIER {$$.obj = new Identifier($2.identifier);}
        ;
 
-ClassBody
-       : LBRACE              RBRACE {$$.obj = new ClassBody();}
-       | LBRACE ClassMembers RBRACE {$$.obj = $2.obj;}
+MemberDeclarations
+       :                    MemberDeclaration {$$.obj = new List<MemberDeclaration>(); ($$.obj as List<MemberDeclaration> ).Add($1.obj as MemberDeclaration);}
+       | MemberDeclarations MemberDeclaration {($$.obj as List<MemberDeclaration>).Add($2.obj as MemberDeclaration);}
        ;
 
-ClassMembers
-       :              ClassMember {ClassBody b = new ClassBody(); $$.obj = b; if($1.intNumber == 0){b.Fields.Add($1.obj as FieldDeclaration);}else{b.Methods.Add($1.obj as MethodDeclaration);};}
-       | ClassMembers ClassMember {ClassBody b = $$.obj as ClassBody; $$.obj = b; if($2.intNumber == 0){b.Fields.Add($2.obj as FieldDeclaration);}else{b.Methods.Add($2.obj as MethodDeclaration);};}
+MemberDeclaration
+       : /* empty */ {$$.obj = null;}
+       | VariableDeclaration {$$.obj = $1.obj;}
+       | MethodDeclaration {$$.obj = $1.obj;}
+       | ConstructorDeclaration  {$$.obj = $1.obj;}
        ;
 
-ClassMember
-       : FieldDeclaration {$$.intNumber = 0; $$.obj = $1.obj;}
-       | MethodDeclaration {$$.intNumber = 1; $$.obj = $1.obj;}
-       ;
+ConstructorDeclaration 
+	: THIS Parameters IS Body END {$$.obj = new ConstructorDeclaration($2.obj as List<Parameter>, $4.obj as Body);}
+	;
 
-FieldDeclaration
-       : Visibility Staticness Type IDENTIFIER SEMICOLON 
-       {FieldDeclaration f = new FieldDeclaration(); f.Visibility = $1.intNumber; f.Staticness = $2.intNumber;
-       f.Type = $3.obj as CType; f.Id = new Identifier($4.identifier); $$.obj = f;}
-       ;
 
-Visibility
-       : /* empty */ {$$.intNumber = 0;}
-       | PRIVATE {$$.intNumber = 0;}
-       | PUBLIC {$$.intNumber = 1;}
-       ;
+VariableDeclaration
+	: VAR IDENTIFIER COLON Expression {$$.obj = new VariableDeclaration(new Identifier($2.identifier), $4.obj as Expression);}
+	;
 
-Staticness
-       : /* empty */ {$$.intNumber = 0;}
-       | STATIC {$$.intNumber = 1;}
-       ;
+
 
 MethodDeclaration
-       : Visibility Staticness MethodType IDENTIFIER Parameters Body   {MethodDeclaration m = new MethodDeclaration(); m.Visibility = $1.intNumber; m.Staticness = $2.intNumber;
-        m.MethodType= (CType) $3.obj; m.Id = new Identifier($4.identifier); m.Params = $5.obj as List<Parameter>; $$.obj = m; m.Body = $6.obj as MethodBody;}
-           
-            
-       ;
+	: METHOD IDENTIFIER Parameters MethodReturn IS Body END {$$.obj = new MethodDeclaration(new Identifier($2.identifier), $3.obj as List<Parameter>, $4.obj as Identifier, $6.obj as Body);}
+	;
+
+
+MethodReturn
+	: /* empty */ {$$.obj = null;}
+	| COLON IDENTIFIER {$$.obj = new Identifier($2.identifier);}
+	;
 
 Parameters
-       : LPAREN               RPAREN {$$.obj = new List<Parameter>();}
+       : /* empty */ {$$.obj = new List<Parameter>();}
        | LPAREN ParameterList RPAREN {$$.obj = $2.obj;}
        ;
 
@@ -143,155 +130,79 @@ ParameterList
        ;
 
 Parameter
-       : Type IDENTIFIER {$$.obj = new Parameter($1.obj as CType, new Identifier($2.identifier)); }
+       : IDENTIFIER COLON ClassName {$$.obj = new Parameter(new Identifier($1.identifier), $3.obj as ClassName); }
        ;
 
-MethodType
-       : Type {$$.obj = $1.obj;}
-       | VOID {$$.obj = new CType();}
-       ;
 
 Body
-       : LBRACE RBRACE {$$.obj = new MethodBody();}
-       | LBRACE LocalDeclarations Statements RBRACE { Console.WriteLine("qq");MethodBody mb = new MethodBody(); mb.LocalDeclarations = $2.obj as List<LocalDeclaration>; mb.Statements = $3.obj as List<Statement>; $$.obj = mb;}
+       : /* empty */ {$$.obj = new Body();}
+       | VariableDeclarations Statements  {Body b = new Body(); b.Variables = $1.obj as List<VariableDeclaration>; b.Statements = $2.obj as List<Statement>; $$.obj = b;}
        ;
 
-LocalDeclarations
-       :                   LocalDeclaration {$$.obj = new List<LocalDeclaration>(); ($$.obj as List<LocalDeclaration> ).Add($1.obj as LocalDeclaration); }
-       | LocalDeclarations LocalDeclaration {($$.obj as List<LocalDeclaration> ).Add($2.obj as LocalDeclaration); }
-       ;
-
-LocalDeclaration
-       : Type IDENTIFIER SEMICOLON { LocalDeclaration ld = new LocalDeclaration(); ld.Type = $1.obj as CType; ld.Id = new Identifier($2.identifier); $$.obj=ld;}
-       ;
+VariableDeclarations
+	: VariableDeclaration {$$.obj = new List<VariableDeclaration>(); ($$.obj as List<VariableDeclaration> ).Add($1.obj as VariableDeclaration);}
+	| VariableDeclarations VariableDeclaration {($$.obj as List<VariableDeclaration>).Add($2.obj as VariableDeclaration);}
+	| /* empty */ 
+	;
 
 Statements
        :            Statement {$$.obj = new List<Statement>(); ($$.obj as List<Statement> ).Add($1.obj as Statement);}
-       | Statements Statement {($$.obj as List<Statement> ).Add($2.obj as Statement); }
+       | Statements Statement {($$.obj as List<Statement>).Add($2.obj as Statement);}
+       | /* empty */ 
        ;
 
 Statement
        : Assignment {$$.obj = $1.obj;}
        | IfStatement {$$.obj = $1.obj;}
-       | WhileStatement {$$.obj = $1.obj;}
+       | WhileLoop {$$.obj = $1.obj;}
        | ReturnStatement {$$.obj = $1.obj;}
-       | CallStatement {$$.obj = $1.obj;}
-       | PrintStatement {$$.obj = $1.obj;}
-       | Block {$$.obj = $1.obj;}
        ;
+
+
 
 Assignment
-       : LeftPart ASSIGN Expression SEMICOLON {$$.obj = new Assignment($1.obj as Expression, $3.obj as Expression);}
-       ;
-
-LeftPart
-       : CompoundName {$$.obj = new LeftPart($1.obj as List<Identifier>);}
-       | CompoundName LBRACKET Expression RBRACKET {$$.obj = new LeftPart($1.obj as List<Identifier>, $3.obj as Expression);}
-       ;
-
-CompoundName
-       :                  IDENTIFIER {$$.obj = new List<Identifier>(); ($$.obj as List<Identifier> ).Add(new Identifier($1.identifier)); }
-       | CompoundName DOT IDENTIFIER {($$.obj as List<Identifier>).Add(new Identifier($3.identifier));}
+       : IDENTIFIER ASSIGN Expression {$$.obj = new Assignment(new Identifier($1.identifier), $3.obj as Expression);}
        ;
 
 IfStatement
-       : IF LPAREN Relation RPAREN Statement {$$.obj = new IfStatement($3.obj as Expression, $5.obj as Statement);}
-       | IF LPAREN Relation RPAREN Statement ELSE Statement {$$.obj = new IfStatement($3.obj as Expression, $5.obj as Statement, $7.obj as Statement);}
+       : IF Expression THEN Body END 
+       | IF Expression THEN Body ELSE Body END 
        ;
 
-WhileStatement
-       : WHILE Relation LOOP Statement SEMICOLON {$$.obj = new WhileStatement($2.obj as Expression, $4.obj as Statement);}
+WhileLoop
+       : WHILE Expression LOOP Body END
        ;
 
 ReturnStatement
-       : RETURN            SEMICOLON {$$.obj = new ReturnStatement();}
-       | RETURN Expression SEMICOLON {$$.obj = new ReturnStatement($2.obj as Expression);}
+       : RETURN             
+       | RETURN Expression 
        ;
 
-CallStatement
-       : CompoundName LPAREN              RPAREN SEMICOLON {$$.obj = new CallStatement($1.obj as List<Identifier>);}
-       | CompoundName LPAREN ArgumentList RPAREN SEMICOLON {$$.obj = new CallStatement($1.obj as List<Identifier>, $3.obj as List<Expression>);}
-       ;
+Expression 
+	: Primary ExpressionList {$$.obj = new Expression();}
+	;
 
-ArgumentList
-       :                    Expression {List<Expression> e = new List<Expression>(); e.Add($1.obj as Expression); $$.obj = e;}
-       | ArgumentList COMMA Expression {List<Expression> e = $$.obj as List<Expression>; e.Add($3.obj as Expression);}
-       ;
+ExpressionList
+	: /* empty */ 
+	| DOT IDENTIFIER Arguments
+	| ExpressionList DOT IDENTIFIER Arguments 
+	;
+	
+Arguments
+	: LPAREN Expressions RPAREN
+	| /*empty*/
+	;
 
-PrintStatement
-       : PRINT Expression SEMICOLON {$$.obj = new PrintStatement($2.obj as Expression);}
-       ;
+Expressions 
+	: Expression
+	| Expressions COMMA Expression
+	;
 
-Block
-       : LBRACE            RBRACE {$$.obj = new Block();}
-       | LBRACE Statements RBRACE {$$.obj = new Block($2.obj as List<Statement>);}
-       ;
 
-Relation
-       : Expression {$$.obj = $1.obj;}
-       | Expression RelationalOperator Expression {$$.obj = new BinaryRelation($1.obj as Expression, $3.obj as Expression, $2.intValue);}
-       ;
+Primary 	
 
-RelationalOperator
-       : LESS {$$.intValue = 0;}
-       | GREATER {$$.intValue = 1;}
-       | EQUAL {$$.intValue = 3;}
-       | NOT_EQUAL {$$.intValue = 2;}
-       ;
+	 : THIS 
 
-Expression
-       :         Term Terms {BinaryOperation o = $2.obj as BinaryOperation; if(o != null){ o.Left = $1.obj as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
-       | AddSign Term Terms {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
-       ;
-
-AddSign
-       : PLUS {$$.intValue = 0;}
-       | MINUS {$$.intValue = 1;}
-       ;
-
-Terms
-       : /* empty */
-       | AddSign Term Terms {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
-       ;
-
-Term
-       : Factor Factors {BinaryOperation o = $2.obj as BinaryOperation; if(o != null){ o.Left = $1.obj as Expression; $$.obj = o;}else{$$.obj = $1.obj;}}
-       ;
-
-Factors
-       : /* empty */
-       | MultSign Factor Factors {$$.obj = new BinaryOperation(null, $2.obj as Expression, $1.intValue); BinaryOperation o = $3.obj as BinaryOperation; if(o != null) o.Left = $2.obj as Expression; }
-       ;
-
-MultSign
-       : MULTIPLY {$$.intValue = 2;}
-       | DIVIDE {$$.intValue =3;}
-       ;
-
-Factor
-       : NUMBER {$$.obj = new IntExpression($1.intNumber);}
-       | LeftPart {$$.obj = $1.obj;}
-       | NULL {$$.obj = new Expression();}
-       | NEW NewType {$$.obj = new CreateExpression($2.obj as CType);}
-       | NEW NewType LBRACKET Expression RBRACKET {$$.obj = new CreateExpression($2.obj as CType, $4.obj as Expression);}
-       ;
-
-NewType
-       : INT {$$.obj = new IntType(false);}
-       | REAL {$$.obj = new RealType(false);}
-       | IDENTIFIER {$$.obj = new CustomType(new Identifier($1.identifier), false);}
-       ;
-
-Type
-       : INT        ArrayTail {$$.obj = new IntType($2.intNumber == 1);}
-       | REAL       ArrayTail {$$.obj = new RealType($2.intNumber == 1);}
-       | IDENTIFIER ArrayTail {$$.obj = new CustomType(new Identifier($1.identifier), $2.intNumber == 1);}
-       ;
-
-ArrayTail
-       : /* empty */       {$$.intNumber = 0;}
-       | LBRACKET RBRACKET {$$.intNumber = 1;}
-       ;
-
+	 ;
 %%
 

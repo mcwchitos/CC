@@ -3,9 +3,9 @@
 //  GPLEX error listing for lex source file <ToyLang.Language.analyzer.lex>
 // ==========================================================================
 //  Version:  1.2.2
-//  Machine:  HUY001
-//  DateTime: 10/18/2019 12:59:25 PM
-//  UserName: huy
+//  Machine:  ORISHDESKTOP
+//  DateTime: 03.12.2019 22:50:58
+//  UserName: richr
 // ==========================================================================
 
 
@@ -39,30 +39,29 @@ Space           [ \t]
 //^^^^^
 // Warning: This pattern always overridden by "{Eol}+" 
 // ----------------------------------------------------
-"IMPORT"                {return (int)Token.IMPORT;}
-"CLASS"                 {return (int)Token.CLASS;}
-"EXTENDS"               {return (int)Token.EXTENDS;}
-"PRIVATE"               {return (int)Token.PRIVATE;}
-"PUBLIC"                {return (int)Token.PUBLIC;}
-"STATIC"                {return (int)Token.STATIC;}
-"VOID"                  {return (int)Token.VOID;}
-"IF"                    {return (int)Token.IF;}
-"ELSE"                  {return (int)Token.ELSE;}
-"WHILE"                 {return (int)Token.WHILE;}
-"LOOP"                  {return (int)Token.LOOP;}
-"RETURN"                {return (int)Token.RETURN;}
-"PRINT"                 {return (int)Token.PRINT;}
-"NULL"                  {return (int)Token.NULL;}
-"NEW"                   {return (int)Token.NEW;}
-"INT"                   {return (int)Token.INT;}
-"REAL"                  {return (int)Token.REAL;}
+
+
+
+"class"                 {return (int)Token.CLASS;}
+"extends"               {return (int)Token.EXTENDS;}
+"if"                    {return (int)Token.IF;}
+"else"                  {return (int)Token.ELSE;}
+"is"                    {return (int)Token.IS;}
+"end"                   {return (int)Token.END;}
+"this"                  {return (int)Token.THIS;}
+"then"                  {return (int)Token.THEN;}
+"while"                 {return (int)Token.WHILE;}
+"loop"                  {return (int)Token.LOOP;}
+"return"                {return (int)Token.RETURN;}
+"true"                  {return (int)Token.TRUE;}
+"false"                 {return (int)Token.FALSE;}
+"method"                {return (int)Token.METHOD;}
+"var"                   {return (int)Token.VAR;}
+
+
 [a-zA-Z_][a-zA-Z0-9_]*  {GetIdentifier(); return (int)Token.IDENTIFIER;}
 [0-9]*	                {GetNumber(); return (int)Token.NUMBER;}
-"="                     {return (int)Token.ASSIGN;}
-"=="                    {return (int)Token.EQUAL;}
-"!="                    {return (int)Token.NOT_EQUAL;}
-"<"                     {return (int)Token.LESS;}
-">"                     {return (int)Token.GREATER;}
+":="                    {return (int)Token.ASSIGN;}
 "("                     {return (int)Token.LPAREN;}
 ")"                     {return (int)Token.RPAREN;}
 "["                     {return (int)Token.LBRACKET;}
@@ -71,11 +70,8 @@ Space           [ \t]
 "}"                     {return (int)Token.RBRACE;}
 "."                     {return (int)Token.DOT;}
 ","                     {return (int)Token.COMMA;}
-"+"                     {return (int)Token.PLUS;}
-"-"                     {return (int)Token.MINUS;}
-"*"                     {return (int)Token.MULTIPLY;}
-"/"                     {return (int)Token.DIVIDE;}
-";"                     {return (int)Token.SEMICOLON;}
+":"                     {return (int)Token.COLON;}
+
 .                       {Console.WriteLine("error"); yyerror("PIZDEC");}
 %%// ==========================================================================
 

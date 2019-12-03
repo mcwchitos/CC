@@ -1,17 +1,8 @@
-﻿IMPORT SomeStuff;
-IMPORT AnotherStuff; 
-
-CLASS mem EXTENDS stuff;{
-
-	PUBLIC INT[] A;
-	PUBLIC RandomType RandomName;
-	PRIVATE STATIC VOID main(INT a, INT b)
-		{
-			REAL c;
-			IKeker keker;
-			keker = NEW Rofler;
-			c = 3;
-			c = c + 3/22;
-			keker.kek(c);
-		}
-}
+﻿class C is
+    this (A : Array[Integer], B : Boolean) is end
+    
+    method func : Integer
+    is
+        a := this
+    end
+end
