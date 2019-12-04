@@ -42,6 +42,7 @@ Space           [ \t]
 "var"                   {return (int)Token.VAR;}
 
 
+
 [a-zA-Z_][a-zA-Z0-9_]*  {GetIdentifier(); return (int)Token.IDENTIFIER;}
 [0-9]*	                {GetNumber(); return (int)Token.NUMBER;}
 ":="                    {return (int)Token.ASSIGN;}

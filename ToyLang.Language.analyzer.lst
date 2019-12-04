@@ -4,7 +4,7 @@
 // ==========================================================================
 //  Version:  1.2.2
 //  Machine:  ORISHDESKTOP
-//  DateTime: 03.12.2019 22:50:58
+//  DateTime: 04.12.2019 16:12:18
 //  UserName: richr
 // ==========================================================================
 
@@ -57,6 +57,7 @@ Space           [ \t]
 "false"                 {return (int)Token.FALSE;}
 "method"                {return (int)Token.METHOD;}
 "var"                   {return (int)Token.VAR;}
+
 
 
 [a-zA-Z_][a-zA-Z0-9_]*  {GetIdentifier(); return (int)Token.IDENTIFIER;}

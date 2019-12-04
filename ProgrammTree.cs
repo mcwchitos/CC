@@ -38,7 +38,7 @@ namespace CCAss3
         }
     }
 
-    class ClassName
+    class ClassName : Primary
     {
         public Identifier Id;
         public ClassName SecondPart;
@@ -229,7 +229,7 @@ namespace CCAss3
     }
 
 
-    class Identifier : Expression
+    class Identifier: Primary
     {
         public string Value;
 
@@ -246,26 +246,70 @@ namespace CCAss3
 
     class Expression
     {
-       
+        public Primary Primary;
+        public List<ExpressionArgument> RightPart = new List<ExpressionArgument>();
 
-        public Expression()
+        public Expression(Primary primary, List<ExpressionArgument> rightPart)
+        {
+            Console.WriteLine(primary);
+            Primary = primary;
+            RightPart = rightPart;
+        }
+        
+        public Expression(Primary primary)
+        {
+            Console.WriteLine(primary);
+            Primary = primary;
+        }
+    }
+
+    class ExpressionArgument
+    {
+        public Identifier Id;
+        public List<Expression> Args = new List<Expression>();
+
+        public ExpressionArgument(Identifier id, List<Expression> args)
+        {
+            Id = id;
+            Args = args;
+        }
+
+        public ExpressionArgument()
         {
         }
     }
 
-    class Primary : Node
+    class Primary 
     {
     }
 
-    class IntegerLiteral : Primary
+    class Integer : Primary
     {
+        public int Value;
+
+        public Integer(int value)
+        {
+            Value = value;
+        }
     }
 
-    class RealLiteral : Primary
+    class Real : Primary
     {
+        public int Value;
+
+        public Real(int value)
+        {
+            Value = value;
+        }
     }
 
-    class BooleanLiteral : Primary
+    class Boolean : Primary
     {
+        public string Value;
+
+        public Boolean(string value)
+        {
+            Value = value;
+        }
     }
 }

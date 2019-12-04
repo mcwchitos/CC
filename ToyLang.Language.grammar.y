@@ -37,6 +37,9 @@
 %token RETURN
 %token METHOD
 %token VAR
+%token INTEGER
+%token REAL
+%token BOOLEAN
 
 
 
@@ -165,44 +168,47 @@ Assignment
        ;
 
 IfStatement
-       : IF Expression THEN Body END 
-       | IF Expression THEN Body ELSE Body END 
+       : IF Expression THEN Body END {$$.obj = new IfStatement($2.obj as Expression, $4.obj as Body);}
+       | IF Expression THEN Body ELSE Body END {$$.obj = new IfStatement($2.obj as Expression, $4.obj as Body, $6.obj as Body);}
        ;
 
 WhileLoop
-       : WHILE Expression LOOP Body END
+       : WHILE Expression LOOP Body END {$$.obj = new WhileLoop($2.obj as Expression, $4.obj as Body);}
        ;
 
 ReturnStatement
-       : RETURN             
-       | RETURN Expression 
+       : RETURN {$$.obj = new ReturnStatement();}     
+       | RETURN Expression {$$.obj = new ReturnStatement($2.obj as Expression);}    
        ;
 
 Expression 
-	: Primary ExpressionList {$$.obj = new Expression();}
+	: Primary {$$.obj = new Expression($1.obj as Primary);}
+	| Primary ExpressionArguments {$$.obj = new Expression($1.obj as Primary, $2.obj as List<ExpressionArgument>);}
 	;
 
-ExpressionList
-	: /* empty */ 
-	| DOT IDENTIFIER Arguments
-	| ExpressionList DOT IDENTIFIER Arguments 
+ExpressionArguments
+	: ExpressionArgument {$$.obj = new List<ExpressionArgument>(); ($$.obj as List<ExpressionArgument> ).Add($1.obj as ExpressionArgument);}
+	| ExpressionArguments ExpressionArgument{($$.obj as List<ExpressionArgument> ).Add($2.obj as ExpressionArgument);}
+	;
+
+ExpressionArgument	
+	: DOT IDENTIFIER Arguments {$$.obj = new ExpressionArgument(new Identifier($2.identifier), $3.obj as List<Expression>);}
 	;
 	
 Arguments
-	: LPAREN Expressions RPAREN
+	: LPAREN Expressions RPAREN {$$.obj = $2.obj as List<Expression>;}
 	| /*empty*/
 	;
 
 Expressions 
-	: Expression
-	| Expressions COMMA Expression
+	: Expression {$$.obj = new List<Expression>(); ($$.obj as List<Expression> ).Add($1.obj as Expression);}
+	| Expressions COMMA Expression {($$.obj as List<Expression> ).Add($3.obj as Expression);}
 	;
 
 
 Primary 	
-
-	 : THIS 
-
+	 : THIS {$$.obj = new Identifier("this");}
+         | ClassName {$$.obj = $1.obj;}
 	 ;
 %%
 

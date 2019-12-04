@@ -1,10 +1,10 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 03.12.2019 22:05:21>
+//  GPPG error listing for yacc source file <ToyLang.Language.grammar.y - 04.12.2019 16:10:26>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  ORISHDESKTOP
-//  DateTime: 03.12.2019 22:05:26
+//  DateTime: 04.12.2019 16:10:51
 //  UserName: richr
 // ==========================================================================
 
@@ -48,6 +48,9 @@
 %token RETURN
 %token METHOD
 %token VAR
+%token INTEGER
+%token REAL
+%token BOOLEAN
 
 
 
@@ -72,9 +75,6 @@
 %start Program
 
 %%
-// Warning: NonTerminal symbol "MethodReturn" is unreachable
-// Warning: NonTerminal symbol "MethodDeclaration" is unreachable
-// --------------------------------------------------------------
 Program   
        : ClassDeclarations    
        ;
@@ -87,7 +87,7 @@ ClassDeclarations
        ;
 
 ClassDeclaration
-       : CLASS ClassName Extension IS MemberDeclarations END {ClassDeclaration c = new ClassDeclaration(); c.ClassName = $2.obj as ClassName; c.Extends = (Identifier) $3.node; c.Members = $5.obj as List<MemberDeclaration>;  Root.Classes.Add(c);}
+       : CLASS ClassName Extension IS MemberDeclarations END {ClassDeclaration c = new ClassDeclaration(); c.ClassName = $2.obj as ClassName; c.Extends = $3.obj as Identifier; c.Members = $5.obj as List<MemberDeclaration>;  Root.Classes.Add(c);}
        ;
        
 ClassName
@@ -106,7 +106,10 @@ MemberDeclarations
        ;
 
 MemberDeclaration
-       :  ConstructorDeclaration {$$.obj = $1.obj;}
+       : /* empty */ {$$.obj = null;}
+       | VariableDeclaration {$$.obj = $1.obj;}
+       | MethodDeclaration {$$.obj = $1.obj;}
+       | ConstructorDeclaration  {$$.obj = $1.obj;}
        ;
 
 ConstructorDeclaration 
@@ -147,7 +150,7 @@ Parameter
 
 Body
        : /* empty */ {$$.obj = new Body();}
-       | VariableDeclarations Statements  {Body b = new Body(); b.Variables = $1.obj as List<VariableDeclaration>; b.Methods = $2.obj as List<MethodDeclaration>; $$.obj = b;}
+       | VariableDeclarations Statements  {Body b = new Body(); b.Variables = $1.obj as List<VariableDeclaration>; b.Statements = $2.obj as List<Statement>; $$.obj = b;}
        ;
 
 VariableDeclarations
@@ -163,57 +166,62 @@ Statements
        ;
 
 Statement
-       : Assignment 
-       | IfStatement 
-       | WhileLoop
-       | ReturnStatement 
+       : Assignment {$$.obj = $1.obj;}
+       | IfStatement {$$.obj = $1.obj;}
+       | WhileLoop {$$.obj = $1.obj;}
+       | ReturnStatement {$$.obj = $1.obj;}
        ;
 
 
 
 Assignment
-       : IDENTIFIER ASSIGN Expression 
+       : IDENTIFIER ASSIGN Expression {$$.obj = new Assignment(new Identifier($1.identifier), $3.obj as Expression);}
        ;
 
 IfStatement
-       : IF Expression THEN Body END 
-       | IF Expression THEN Body ELSE Body END 
+       : IF Expression THEN Body END {$$.obj = new IfStatement($2.obj as Expression, $4.obj as Body);}
+       | IF Expression THEN Body ELSE Body END {$$.obj = new IfStatement($2.obj as Expression, $4.obj as Body, $6.obj as Body);}
        ;
 
 WhileLoop
-       : WHILE Expression LOOP Body END
+       : WHILE Expression LOOP Body END {$$.obj = new WhileLoop($2.obj as Expression, $4.obj as Body);}
        ;
 
 ReturnStatement
-       : RETURN             
-       | RETURN Expression 
+       : RETURN {$$.obj = new ReturnStatement();}     
+       | RETURN Expression {$$.obj = new ReturnStatement($2.obj as Expression);}    
        ;
 
 Expression 
-	: Primary ExpressionList 
+	: Primary {$$.obj = new Expression($1.obj as Primary);}
+	| Primary ExpressionArguments {$$.obj = new Expression($1.obj as Primary, $2.obj as List<ExpressionArgument>);}
 	;
 
-ExpressionList
-	: /* empty */ 
-	| DOT IDENTIFIER Arguments
-	| ExpressionList DOT IDENTIFIER Arguments 
+ExpressionArguments
+	| ExpressionArgument {$$.obj = new List<ExpressionArgument>(); ($$.obj as List<ExpressionArgument> ).Add($1.obj as ExpressionArgument);}
+// Error: Syntax error, unexpected '|', expecting ':'
+// --------------------------------------------------
+	| ExpressionArguments ExpressionArgument{($$.obj as List<ExpressionArgument> ).Add($2.obj as ExpressionArgument);}
+	;
+
+ExpressionArgument	
+	: DOT IDENTIFIER Arguments {$$.obj = new ExpressionArgument(new Identifier($2.identifier), $3.obj as List<Expression>);}
 	;
 	
 Arguments
-	: LPAREN Expressions RPAREN
+	: LPAREN Expressions RPAREN {$$.obj = $2.obj as List<Expression>;}
 	| /*empty*/
 	;
 
 Expressions 
-	: Expression
-	| Expressions COMMA Expression
+	: Expression {$$.obj = new List<Expression>(); ($$.obj as List<Expression> ).Add($1.obj as Expression);}
+	| Expressions COMMA Expression {($$.obj as List<Expression> ).Add($3.obj as Expression);}
 	;
 
 
 Primary 	
-
-	 : THIS
-
+	 : THIS {$$.obj = new Identifier($1.identifier);}
+         | ClassName {$$.obj = $1.obj;}
 	 ;
 %%
 

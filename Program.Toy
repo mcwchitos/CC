@@ -1,8 +1,19 @@
-﻿class C is
+﻿class C extends D is
     this (A : Array[Integer], B : Boolean) is end
     
     method func : Integer
     is
         a := this
+        while this loop
+        end
+        
+        if i.greater(j) then
+        b:=this
+        else
+        c:=this
+        end
+        
+        return this.a.b.c(this, this)
     end
+    
 end
