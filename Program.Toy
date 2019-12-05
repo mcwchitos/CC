@@ -1,4 +1,4 @@
-﻿class C extends D is
+﻿﻿class C extends D is
     this (A : Array[Integer], B : Boolean) is end
     
     method func : Integer
