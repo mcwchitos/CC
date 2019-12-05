@@ -1,6 +1,8 @@
 ﻿﻿class C extends D is
     this (A : Array[Integer], B : Boolean) is end
     
+    var arr : Array[Integer]
+    
     method func : Integer
     is
         a := this
@@ -8,12 +10,11 @@
         end
         
         if i.greater(j) then
-        b:=this
+        b:=2
         else
-        c:=this
+        c:=3
         end
         
-        return this.a.b.c(this, this)
+        return a.b.c(1)
     end
-    
 end

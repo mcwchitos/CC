@@ -6,7 +6,7 @@
 //
 //  GPLEX Version:  1.2.2
 //  Machine:  ORISHDESKTOP
-//  DateTime: 04.12.2019 16:12:18
+//  DateTime: 05.12.2019 23:15:09
 //  UserName: richr
 //  GPLEX input file <ToyLang.Language.analyzer.lex - 04.12.2019 15:38:00>
 //  GPLEX frame file <embedded resource>

@@ -209,6 +209,7 @@ Expressions
 Primary 	
 	 : THIS {$$.obj = new Identifier("this");}
          | ClassName {$$.obj = $1.obj;}
+         | NUMBER {$$.obj = new Integer($1.intNumber);}
 	 ;
 %%
 
